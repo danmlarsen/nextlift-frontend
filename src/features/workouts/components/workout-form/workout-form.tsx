@@ -141,7 +141,8 @@ export default function WorkoutForm({
           {workout.status === "COMPLETED" && (
             <>
               <DurationInput
-                workout={workout}
+                activeDuration={workout.activeDuration}
+                isEditing={isEditing}
                 onDurationChanged={handleUpdateWorkoutDuration}
               />
               <div className="flex gap-2">
@@ -156,7 +157,8 @@ export default function WorkoutForm({
           {workout.status === "DRAFT" && (
             <>
               <DurationInput
-                workout={workout}
+                activeDuration={workout.activeDuration}
+                isEditing={isEditing}
                 onDurationChanged={handleUpdateWorkoutDuration}
               />
               <div className="flex gap-2">

@@ -6,9 +6,7 @@ import { Label } from "./ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { type WorkoutData } from "@/api/workouts/types";
 import { formatTimeFromMs } from "@/lib/utils";
-import { useWorkoutFormContext } from "@/features/workouts/components/workout-form/workout-form";
 
 const secondsToTimeString = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -23,17 +21,18 @@ const timeStringToSeconds = (timeString: string) => {
 };
 
 interface DurationInputProps {
-  workout: WorkoutData;
+  activeDuration: number;
+  isEditing: boolean;
   onDurationChanged: (duration: number) => void;
 }
 
 export default function DurationInput({
-  workout,
+  activeDuration,
+  isEditing,
   onDurationChanged,
 }: DurationInputProps) {
   const [open, setOpen] = useState(false);
-  const [duration, setDuration] = useState(workout.activeDuration);
-  const { isEditing } = useWorkoutFormContext();
+  const [duration, setDuration] = useState(activeDuration);
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
