@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import {
-  useCompleteDraftWorkout,
+  useCompleteWorkout,
   useCreateDraftWorkout,
   useDeleteWorkout,
 } from "@/api/workouts/workout-mutations";
@@ -15,6 +15,7 @@ import WorkoutForm from "../workout-form/workout-form";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useSearchParamState } from "@/hooks/use-search-param-state";
+import { useWorkoutModal } from "./workout-modal-provider";
 
 interface AddWorkoutButtonProps extends React.ComponentProps<"button"> {
   selectedDate?: Date;
@@ -26,20 +27,17 @@ export default function AddWorkoutButton({
   children,
   ...props
 }: AddWorkoutButtonProps) {
-  const [workoutId, setWorkoutId] = useState<number | undefined>();
-  const [open, setOpen] = useSearchParamState("add-workout-modal");
   const createWorkout = useCreateDraftWorkout();
-  const completeDraftWorkout = useCompleteDraftWorkout();
+  const completeWorkout = useCompleteWorkout();
   const deleteWorkout = useDeleteWorkout();
-  const workout = useWorkout(workoutId);
+  const { openWorkout } = useWorkoutModal();
 
   const handleAddWorkout = () => {
     createWorkout.mutate(
       { startedAt: selectedDate?.toISOString() || undefined },
       {
         onSuccess: (workout) => {
-          setWorkoutId(workout.id);
-          setOpen(true);
+          openWorkout(workout.id);
         },
         onError: () => {
           toast.error(
@@ -50,34 +48,34 @@ export default function AddWorkoutButton({
     );
   };
 
-  const handleOpenChange = () => {
-    setOpen(false);
-    if (workout.data && workout.data.status === "DRAFT") {
-      deleteWorkout.mutate(workout.data.id);
-    }
-  };
+  // const handleOpenChange = () => {
+  //   setOpen(false);
+  //   if (workout.data && workout.data.status === "DRAFT") {
+  //     deleteWorkout.mutate(workout.data.id);
+  //   }
+  // };
 
-  const handleSaveWorkout = () => {
-    if (!workout.data) return;
-    completeDraftWorkout.mutate(workout.data.id, {
-      onSuccess: () => {
-        setOpen(false);
-      },
-    });
-  };
+  // const handleSaveWorkout = () => {
+  //   if (!workout.data) return;
+  //   completeWorkout.mutate(workout.data.id, {
+  //     onSuccess: () => {
+  //       setOpen(false);
+  //     },
+  //   });
+  // };
 
-  const handleDiscardWorkout = () => {
-    if (!workout.data) return;
-    deleteWorkout.mutate(workout.data.id, {
-      onSuccess: () => {
-        setOpen(false);
-      },
-    });
-  };
+  // const handleDiscardWorkout = () => {
+  //   if (!workout.data) return;
+  //   deleteWorkout.mutate(workout.data.id, {
+  //     onSuccess: () => {
+  //       setOpen(false);
+  //     },
+  //   });
+  // };
 
   return (
     <>
-      {createWorkout.isSuccess && (
+      {/* {createWorkout.isSuccess && (
         <ResponsiveModal
           isOpen={open}
           onOpenChange={handleOpenChange}
@@ -95,7 +93,7 @@ export default function AddWorkoutButton({
           title="Add workout"
           description="Add workout"
         />
-      )}
+      )} */}
       <Button
         className={cn("", className)}
         onClick={handleAddWorkout}

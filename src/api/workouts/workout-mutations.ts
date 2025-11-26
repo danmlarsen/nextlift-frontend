@@ -58,7 +58,7 @@ export function useCompleteWorkout() {
         method: "POST",
       }),
     onSuccess: async (updatedWorkout, workoutId) => {
-      queryClient.setQueryData(["activeWorkout"], null);
+      // queryClient.setQueryData(["activeWorkout"], null);
       queryClient.setQueryData(["workout", { id: workoutId }], updatedWorkout);
       await queryClient.invalidateQueries({ queryKey: ["workouts"] });
       await queryClient.invalidateQueries({ queryKey: ["exercises"] });
@@ -66,22 +66,22 @@ export function useCompleteWorkout() {
   });
 }
 
-export function useCompleteDraftWorkout() {
-  const { apiClient } = useApiClient();
-  const queryClient = useQueryClient();
+// export function useCompleteDraftWorkout() {
+//   const { apiClient } = useApiClient();
+//   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (workoutId: number) =>
-      apiClient<WorkoutData>(`/workouts/${workoutId}/complete`, {
-        method: "POST",
-      }),
-    onSuccess: async (updatedWorkout, workoutId) => {
-      queryClient.setQueryData(["workout", { id: workoutId }], updatedWorkout);
-      await queryClient.invalidateQueries({ queryKey: ["workouts"] });
-      await queryClient.invalidateQueries({ queryKey: ["exercises"] });
-    },
-  });
-}
+//   return useMutation({
+//     mutationFn: (workoutId: number) =>
+//       apiClient<WorkoutData>(`/workouts/${workoutId}/complete`, {
+//         method: "POST",
+//       }),
+//     onSuccess: async (updatedWorkout, workoutId) => {
+//       queryClient.setQueryData(["workout", { id: workoutId }], updatedWorkout);
+//       await queryClient.invalidateQueries({ queryKey: ["workouts"] });
+//       await queryClient.invalidateQueries({ queryKey: ["exercises"] });
+//     },
+//   });
+// }
 
 export function useDeleteActiveWorkout() {
   const { apiClient } = useApiClient();

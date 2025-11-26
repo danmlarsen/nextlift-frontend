@@ -21,7 +21,6 @@ import { parseWorkoutTitle } from "@/lib/utils";
 import DatePicker from "@/components/date-picker";
 import DurationInput from "@/components/duration-input";
 import ExerciseDetailsModal from "@/features/exercises/components/exercise-details/exercise-details-modal";
-import { useActiveWorkoutContext } from "@/context/active-workout-context";
 import { Spinner } from "@/components/ui/spinner";
 
 interface WorkoutFormProps {
@@ -59,7 +58,6 @@ export default function WorkoutForm({
   const isActiveWorkout = workout.status === "ACTIVE";
   const updateWorkout = useUpdateWorkout(isActiveWorkout);
   const deleteActiveWorkout = useDeleteActiveWorkout();
-  const { setActiveWorkoutOpen } = useActiveWorkoutContext();
 
   const hasIncompleteSets =
     workout.workoutExercises?.filter(
@@ -96,7 +94,6 @@ export default function WorkoutForm({
   };
 
   const handleDeleteActiveWorkoutConfirm = () => {
-    setActiveWorkoutOpen(false);
     deleteActiveWorkout.mutate();
   };
 
