@@ -57,7 +57,7 @@ export default function WorkoutSet({
   const [duration, setDuration] = useState(
     workoutSet?.duration?.toString() || "",
   );
-  const { workout, isActiveWorkout, isEditing } = useWorkoutFormContext();
+  const { workout, isEditing } = useWorkoutFormContext();
   const isPendingDelete = useMutationState({
     filters: {
       mutationKey: ["deleteWorkoutSet"],
@@ -67,7 +67,7 @@ export default function WorkoutSet({
   }).some((set) => set.setId === workoutSet.id);
 
   const workoutId = workout.id;
-  const { mutate } = useUpdateWorkoutSet(isActiveWorkout);
+  const { mutate } = useUpdateWorkoutSet();
   const updateWorkoutSet = (payload: WorkoutSetDto) =>
     mutate({
       workoutId,

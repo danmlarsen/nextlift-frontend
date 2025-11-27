@@ -10,15 +10,13 @@ import { Spinner } from "@/components/ui/spinner";
 
 interface AddExerciseButtonProps {
   workoutId: number;
-  isActiveWorkout?: boolean;
 }
 
 export default function AddExerciseButton({
   workoutId,
-  isActiveWorkout = false,
 }: AddExerciseButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const addWorkoutExercise = useAddWorkoutExercise(isActiveWorkout);
+  const addWorkoutExercise = useAddWorkoutExercise();
 
   const handleExerciseClick = (exerciseId: number) => {
     if (addWorkoutExercise.isPending) return;

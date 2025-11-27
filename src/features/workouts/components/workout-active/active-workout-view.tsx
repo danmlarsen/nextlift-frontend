@@ -12,10 +12,12 @@ import { ResponsiveModal } from "@/components/ui/responsive-modal";
 import { parseWorkoutTitle } from "@/lib/utils";
 import { useActiveWorkoutContext } from "@/context/active-workout-context";
 import { useDeleteActiveWorkout } from "@/api/workouts/workout-mutations";
+import { useWorkoutModal } from "../workout-history/workout-modal-provider";
 
 export default function ActiveWorkoutView() {
   const [deleteWorkoutOpen, setDeleteWorkoutOpen] = useState(false);
   const { activeWorkoutOpen, setActiveWorkoutOpen } = useActiveWorkoutContext();
+  const { openWorkout } = useWorkoutModal();
   const { data: activeWorkout } = useActiveWorkout();
   const deleteActiveWorkout = useDeleteActiveWorkout();
 
@@ -73,7 +75,7 @@ export default function ActiveWorkoutView() {
               <Button
                 variant="outline"
                 className="p-4"
-                onClick={() => setActiveWorkoutOpen(true)}
+                onClick={() => openWorkout(activeWorkout.id)}
               >
                 <MaximizeIcon />
               </Button>

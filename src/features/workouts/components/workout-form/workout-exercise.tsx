@@ -40,10 +40,10 @@ export default function WorkoutExercise({
   onOpenExercise,
 }: WorkoutExerciseProps) {
   const [notesOpen, setNotesOpen] = useState(false);
-  const { isActiveWorkout, isEditing } = useWorkoutFormContext();
-  const addWorkoutSet = useAddWorkoutSet(isActiveWorkout);
-  const updateWorkoutExercise = useUpdateWorkoutExercise(isActiveWorkout);
-  const deleteWorkoutExercise = useDeleteWorkoutExercise(isActiveWorkout);
+  const { isEditing } = useWorkoutFormContext();
+  const addWorkoutSet = useAddWorkoutSet();
+  const updateWorkoutExercise = useUpdateWorkoutExercise();
+  const deleteWorkoutExercise = useDeleteWorkoutExercise();
 
   // Track pending add set mutations for this specific exercise
   const pendingAddSetCount = useMutationState({

@@ -56,7 +56,7 @@ export default function WorkoutForm({
   >();
   const completeWorkout = useCompleteWorkout();
   const isActiveWorkout = workout.status === "ACTIVE";
-  const updateWorkout = useUpdateWorkout(isActiveWorkout);
+  const updateWorkout = useUpdateWorkout();
   const deleteActiveWorkout = useDeleteActiveWorkout();
 
   const hasIncompleteSets =
@@ -210,12 +210,7 @@ export default function WorkoutForm({
             ))}
           </ul>
         )}
-        {isEditing && (
-          <AddExerciseButton
-            workoutId={workout.id}
-            isActiveWorkout={isActiveWorkout}
-          />
-        )}
+        {isEditing && <AddExerciseButton workoutId={workout.id} />}
         {isActiveWorkout && (
           <Button
             onClick={() => setDeleteWorkoutOpen(true)}

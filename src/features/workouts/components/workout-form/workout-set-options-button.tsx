@@ -21,9 +21,9 @@ interface WorkoutSetOptionsButtonProps {
 export default function WorkoutSetOptionsButton({
   workoutSet,
 }: WorkoutSetOptionsButtonProps) {
-  const { workout, isActiveWorkout, isEditing } = useWorkoutFormContext();
-  const updateWorkoutSet = useUpdateWorkoutSet(isActiveWorkout);
-  const deleteWorkoutSet = useDeleteWorkoutSet(isActiveWorkout);
+  const { workout, isEditing } = useWorkoutFormContext();
+  const updateWorkoutSet = useUpdateWorkoutSet();
+  const deleteWorkoutSet = useDeleteWorkoutSet();
 
   const workoutId = workout.id;
 

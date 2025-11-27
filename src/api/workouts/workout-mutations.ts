@@ -99,7 +99,7 @@ export function useDeleteActiveWorkout() {
   });
 }
 
-export function useUpdateWorkout(isActiveWorkout?: boolean) {
+export function useUpdateWorkout() {
   const { apiClient } = useApiClient();
   const queryClient = useQueryClient();
 
@@ -116,17 +116,13 @@ export function useUpdateWorkout(isActiveWorkout?: boolean) {
         body: JSON.stringify(data),
       }),
     onSuccess: async (updatedWorkout, vars) => {
-      if (isActiveWorkout) {
-        queryClient.setQueryData(["activeWorkout"], updatedWorkout);
-      } else {
-        queryClient.setQueryData(
-          ["workout", { id: vars.workoutId }],
-          updatedWorkout,
-        );
-        await queryClient.invalidateQueries({
-          queryKey: ["workouts"],
-        });
-      }
+      queryClient.setQueryData(
+        ["workout", { id: vars.workoutId }],
+        updatedWorkout,
+      );
+      await queryClient.invalidateQueries({
+        queryKey: ["workouts"],
+      });
     },
   });
 }

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useApiClient } from "../client";
 import { type WorkoutData, type WorkoutSetDto } from "./types";
 
-export function useAddWorkoutSet(isActiveWorkout?: boolean) {
+export function useAddWorkoutSet() {
   const { apiClient } = useApiClient();
   const queryClient = useQueryClient();
 
@@ -22,19 +22,15 @@ export function useAddWorkoutSet(isActiveWorkout?: boolean) {
         },
       ),
     onSuccess: async (updatedWorkout, vars) => {
-      if (isActiveWorkout) {
-        queryClient.setQueryData(["activeWorkout"], updatedWorkout);
-      } else {
-        queryClient.setQueryData(
-          ["workout", { id: vars.workoutId }],
-          updatedWorkout,
-        );
-      }
+      queryClient.setQueryData(
+        ["workout", { id: vars.workoutId }],
+        updatedWorkout,
+      );
     },
   });
 }
 
-export function useUpdateWorkoutSet(isActiveWorkout?: boolean) {
+export function useUpdateWorkoutSet() {
   const { apiClient } = useApiClient();
   const queryClient = useQueryClient();
 
@@ -58,9 +54,7 @@ export function useUpdateWorkoutSet(isActiveWorkout?: boolean) {
         },
       ),
     onMutate: async (variables) => {
-      const queryKey = isActiveWorkout
-        ? ["activeWorkout"]
-        : ["workout", { id: variables.workoutId }];
+      const queryKey = ["workout", { id: variables.workoutId }];
 
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey });
@@ -102,19 +96,15 @@ export function useUpdateWorkoutSet(isActiveWorkout?: boolean) {
       }
     },
     onSuccess: async (updatedWorkout, vars) => {
-      if (isActiveWorkout) {
-        queryClient.setQueryData(["activeWorkout"], updatedWorkout);
-      } else {
-        queryClient.setQueryData(
-          ["workout", { id: vars.workoutId }],
-          updatedWorkout,
-        );
-      }
+      queryClient.setQueryData(
+        ["workout", { id: vars.workoutId }],
+        updatedWorkout,
+      );
     },
   });
 }
 
-export function useDeleteWorkoutSet(isActiveWorkout?: boolean) {
+export function useDeleteWorkoutSet() {
   const { apiClient } = useApiClient();
   const queryClient = useQueryClient();
 
@@ -136,14 +126,10 @@ export function useDeleteWorkoutSet(isActiveWorkout?: boolean) {
         },
       ),
     onSuccess: async (updatedWorkout, vars) => {
-      if (isActiveWorkout) {
-        queryClient.setQueryData(["activeWorkout"], updatedWorkout);
-      } else {
-        queryClient.setQueryData(
-          ["workout", { id: vars.workoutId }],
-          updatedWorkout,
-        );
-      }
+      queryClient.setQueryData(
+        ["workout", { id: vars.workoutId }],
+        updatedWorkout,
+      );
     },
   });
 }
