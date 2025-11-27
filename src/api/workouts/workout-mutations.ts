@@ -44,6 +44,7 @@ export function useCreateActiveWorkout() {
       }),
     onSuccess: (newWorkout) => {
       queryClient.setQueryData(["activeWorkout"], newWorkout);
+      queryClient.setQueryData(["workout", { id: newWorkout.id }], newWorkout);
     },
   });
 }
