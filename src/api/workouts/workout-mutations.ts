@@ -154,7 +154,6 @@ export function usePauseActiveWorkout() {
         method: "PATCH",
       }),
     onSuccess: (updatedWorkout) => {
-      queryClient.setQueryData(["activeWorkout"], updatedWorkout);
       queryClient.setQueryData(
         ["workout", { id: updatedWorkout.id }],
         updatedWorkout,
@@ -173,7 +172,6 @@ export function useResumeActiveWorkout() {
         method: "PATCH",
       }),
     onSuccess: (updatedWorkout) => {
-      queryClient.setQueryData(["activeWorkout"], updatedWorkout);
       queryClient.setQueryData(
         ["workout", { id: updatedWorkout.id }],
         updatedWorkout,
