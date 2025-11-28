@@ -4,22 +4,22 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { useActiveWorkout } from "@/api/workouts/queries";
-import { useActiveWorkoutContext } from "@/context/active-workout-context";
 import { useCreateActiveWorkout } from "@/api/workouts/workout-mutations";
 import { Spinner } from "@/components/ui/spinner";
+import { useWorkoutModal } from "../workout-history/workout-modal-provider";
 
 export default function NewWorkoutButton() {
-  const { setActiveWorkoutOpen } = useActiveWorkoutContext();
   const { data: activeWorkout } = useActiveWorkout();
   const createActiveWorkout = useCreateActiveWorkout();
+  const { openWorkout } = useWorkoutModal();
 
   const handleClick = () => {
     if (activeWorkout) {
-      setActiveWorkoutOpen(true);
+      openWorkout(activeWorkout.id);
     } else {
       createActiveWorkout.mutate(undefined, {
-        onSuccess: () => {
-          setActiveWorkoutOpen(true);
+        onSuccess: (newWorkout) => {
+          openWorkout(newWorkout.id);
         },
         onError: () => {
           toast.error(

@@ -93,8 +93,9 @@ export function useDeleteActiveWorkout() {
       apiClient<WorkoutData>("/workouts/active", {
         method: "DELETE",
       }),
-    onSuccess: () => {
+    onSuccess: (deletedWorkout) => {
       queryClient.setQueryData(["activeWorkout"], null);
+      queryClient.setQueryData(["workout", { id: deletedWorkout.id }], null);
     },
   });
 }
@@ -154,6 +155,10 @@ export function usePauseActiveWorkout() {
       }),
     onSuccess: (updatedWorkout) => {
       queryClient.setQueryData(["activeWorkout"], updatedWorkout);
+      queryClient.setQueryData(
+        ["workout", { id: updatedWorkout.id }],
+        updatedWorkout,
+      );
     },
   });
 }
@@ -169,6 +174,10 @@ export function useResumeActiveWorkout() {
       }),
     onSuccess: (updatedWorkout) => {
       queryClient.setQueryData(["activeWorkout"], updatedWorkout);
+      queryClient.setQueryData(
+        ["workout", { id: updatedWorkout.id }],
+        updatedWorkout,
+      );
     },
   });
 }

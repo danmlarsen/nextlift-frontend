@@ -4,31 +4,27 @@ import { useState } from "react";
 import { MaximizeIcon, XIcon } from "lucide-react";
 
 import { useActiveWorkout } from "@/api/workouts/queries";
-import WorkoutForm from "@/features/workouts/components/workout-form/workout-form";
 import { Button } from "@/components/ui/button";
 import Timer from "@/components/ui/timer";
 import DeleteActiveWorkoutDialog from "./delete-active-workout-dialog";
-import { ResponsiveModal } from "@/components/ui/responsive-modal";
 import { parseWorkoutTitle } from "@/lib/utils";
-import { useActiveWorkoutContext } from "@/context/active-workout-context";
 import { useDeleteActiveWorkout } from "@/api/workouts/workout-mutations";
 import { useWorkoutModal } from "../workout-history/workout-modal-provider";
 
 export default function ActiveWorkoutView() {
   const [deleteWorkoutOpen, setDeleteWorkoutOpen] = useState(false);
-  const { activeWorkoutOpen, setActiveWorkoutOpen } = useActiveWorkoutContext();
   const { openWorkout } = useWorkoutModal();
   const { data: activeWorkout } = useActiveWorkout();
   const deleteActiveWorkout = useDeleteActiveWorkout();
 
   const handleDeleteWorkoutConfirm = () => {
-    setActiveWorkoutOpen(false);
+    // setActiveWorkoutOpen(false);
     deleteActiveWorkout.mutate();
   };
 
   return (
     <>
-      <ResponsiveModal
+      {/* <ResponsiveModal
         isOpen={activeWorkoutOpen}
         onOpenChange={setActiveWorkoutOpen}
         content={
@@ -42,7 +38,7 @@ export default function ActiveWorkoutView() {
           ) : null
         }
         title="Active Workout"
-      />
+      /> */}
 
       {activeWorkout && (
         <>
