@@ -39,7 +39,7 @@ export default function AddExerciseButton({
         title="Add Exercise"
         content={
           <div className="relative">
-            <div className="px-4">
+            <div className="p-4">
               <ExercisesView onExerciseClick={handleExerciseClick} />
             </div>
             {addWorkoutExercise.isPending && (

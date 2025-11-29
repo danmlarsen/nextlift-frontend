@@ -12,17 +12,18 @@ import {
   useCompleteWorkout,
   useDeleteWorkout,
   useInvalidateWorkout,
-  useUpdateWorkout,
 } from "@/api/workouts/workout-mutations";
 import CompleteWorkoutDialog from "../workout-active/complete-workout-dialog";
 import DeleteActiveWorkoutDialog from "../workout-active/delete-active-workout-dialog";
-import Timer from "@/components/ui/timer";
-import { Button } from "@/components/ui/button";
-import DurationInput from "@/components/duration-input";
 import { useQueryClient } from "@tanstack/react-query";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import WorkoutModalHeader from "./workout-modal-header";
 
 interface WorkoutModalProviderContextValue {
   openWorkout: (workoutId: number, editing?: boolean) => void;
+  closeWorkout: () => void;
+  isEditing: boolean;
+  toggleEdit: () => void;
 }
 
 const WorkoutModalContext =
@@ -49,8 +50,8 @@ export default function WorkoutModalProvider({
   } = useWorkout(workoutId || undefined);
   const completeWorkout = useCompleteWorkout();
   const deleteWorkout = useDeleteWorkout();
-  const updateWorkout = useUpdateWorkout();
   const queryClient = useQueryClient();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const workoutTitle = workout ? parseWorkoutTitle(workout) : "Loading...";
   const hasIncompleteSets = workout
@@ -111,82 +112,41 @@ export default function WorkoutModalProvider({
     });
   };
 
-  const handleUpdateWorkoutDuration = (duration: number) => {
-    if (!workout) return;
-
-    updateWorkout.mutate({
-      workoutId: workout.id,
-      data: { activeDuration: duration },
-    });
-  };
-
   return (
-    <WorkoutModalContext.Provider value={{ openWorkout }}>
+    <WorkoutModalContext.Provider
+      value={{ openWorkout, closeWorkout, toggleEdit, isEditing }}
+    >
       {children}
 
       <ResponsiveModal
         isOpen={isOpen}
         onOpenChange={closeWorkout}
         content={
-          <div className="px-4">
+          <>
             {workoutId && isLoading && (
               <div className="flex items-center justify-center py-8">
                 <Spinner />
               </div>
             )}
             {isSuccess && workout && (
-              <>
-                <div className="flex items-center justify-between">
-                  {workout.status === "ACTIVE" && (
-                    <>
-                      <Timer workout={workout} isButton={true} />
-                      <Button
-                        onClick={() => setCompleteWorkoutDialogOpen(true)}
-                      >
-                        Finish
-                      </Button>
-                    </>
-                  )}
-
-                  {workout.status === "COMPLETED" && (
-                    <>
-                      <DurationInput
-                        activeDuration={workout.activeDuration}
-                        isEditing={isEditing}
-                        onDurationChanged={handleUpdateWorkoutDuration}
-                      />
-                      <div className="flex gap-2">
-                        <Button onClick={closeWorkout}>Close</Button>
-                        <Button onClick={toggleEdit}>
-                          {isEditing ? "Stop Editing" : "Edit"}
-                        </Button>
-                      </div>
-                    </>
-                  )}
-
-                  {workout.status === "DRAFT" && (
-                    <>
-                      <DurationInput
-                        activeDuration={workout.activeDuration}
-                        isEditing={isEditing}
-                        onDurationChanged={handleUpdateWorkoutDuration}
-                      />
-                      <div className="flex gap-2">
-                        <Button onClick={handleDeleteWorkout}>Discard</Button>
-                        <Button onClick={handleSaveWorkout}>Save</Button>
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                <WorkoutForm
+              <div className="grid h-[calc(100dvh-50px)] grid-rows-[auto_1fr]">
+                <WorkoutModalHeader
                   workout={workout}
-                  onDelete={() => setDeleteWorkoutOpen(true)}
-                  isEditing={isEditing}
+                  onClickComplete={() => setCompleteWorkoutDialogOpen(true)}
+                  onClickDelete={() => setDeleteWorkoutOpen(true)}
+                  onClickSave={handleSaveWorkout}
                 />
-              </>
+
+                <div className="overflow-y-auto px-4">
+                  <WorkoutForm
+                    workout={workout}
+                    onDelete={() => setDeleteWorkoutOpen(true)}
+                    isEditing={isEditing}
+                  />
+                </div>
+              </div>
             )}
-          </div>
+          </>
         }
         title={workoutTitle}
         description={`Viewing workout ${workoutTitle}`}
