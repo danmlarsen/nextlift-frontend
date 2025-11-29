@@ -8,7 +8,17 @@ import WorkoutForm from "../workout-form/workout-form";
 import { useWorkout } from "@/api/workouts/queries";
 import { parseWorkoutTitle } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
-import { useInvalidateWorkout } from "@/api/workouts/workout-mutations";
+import {
+  useCompleteWorkout,
+  useDeleteActiveWorkout,
+  useInvalidateWorkout,
+  useUpdateWorkout,
+} from "@/api/workouts/workout-mutations";
+import CompleteWorkoutDialog from "../workout-active/complete-workout-dialog";
+import DeleteActiveWorkoutDialog from "../workout-active/delete-active-workout-dialog";
+import Timer from "@/components/ui/timer";
+import { Button } from "@/components/ui/button";
+import DurationInput from "@/components/duration-input";
 
 interface WorkoutModalProviderContextValue {
   openWorkout: (workoutId: number, editing?: boolean) => void;
@@ -27,14 +37,27 @@ export default function WorkoutModalProvider({
   const [isOpen, setIsOpen] = useSearchParamState("workout-modal");
   const [workoutId, setWorkoutId] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(true);
+  const [completeWorkoutDialogOpen, setCompleteWorkoutDialogOpen] =
+    useState(false);
+  const [deleteWorkoutOpen, setDeleteWorkoutOpen] = useState(false);
   const invalidateWorkout = useInvalidateWorkout();
   const {
     data: workout,
     isSuccess,
     isLoading,
   } = useWorkout(workoutId || undefined);
+  const completeWorkout = useCompleteWorkout();
+  const deleteActiveWorkout = useDeleteActiveWorkout();
+  const updateWorkout = useUpdateWorkout();
 
   const workoutTitle = workout ? parseWorkoutTitle(workout) : "Loading...";
+  const hasIncompleteSets = workout
+    ? workout.workoutExercises?.filter(
+        (workoutExercise) =>
+          workoutExercise.workoutSets?.filter((set) => !set.completed).length >
+          0,
+      ).length > 0
+    : false;
 
   const openWorkout = (workoutId: number, editing = true) => {
     setWorkoutId(workoutId);
@@ -53,8 +76,29 @@ export default function WorkoutModalProvider({
     setIsEditing((prev) => !prev);
   };
 
+  const handleCompleteWorkout = () => {
+    if (!workout) return;
+
+    completeWorkout.mutate(workout.id);
+  };
+
+  const handleDeleteActiveWorkoutConfirm = () => {
+    deleteActiveWorkout.mutate();
+  };
+
+  const handleUpdateWorkoutDuration = (duration: number) => {
+    if (!workout) return;
+
+    updateWorkout.mutate({
+      workoutId: workout.id,
+      data: { activeDuration: duration },
+    });
+  };
+
   return (
     <WorkoutModalContext.Provider value={{ openWorkout }}>
+      {children}
+
       <ResponsiveModal
         isOpen={isOpen}
         onOpenChange={closeWorkout}
@@ -66,19 +110,75 @@ export default function WorkoutModalProvider({
               </div>
             )}
             {isSuccess && workout && (
-              <WorkoutForm
-                workout={workout}
-                onClose={closeWorkout}
-                onToggleEdit={toggleEdit}
-                isEditing={isEditing}
-              />
+              <>
+                <div className="flex items-center justify-between">
+                  {workout.status === "ACTIVE" && (
+                    <>
+                      <Timer workout={workout} isButton={true} />
+                      <Button
+                        onClick={() => setCompleteWorkoutDialogOpen(true)}
+                      >
+                        Finish
+                      </Button>
+                    </>
+                  )}
+
+                  {workout.status === "COMPLETED" && (
+                    <>
+                      <DurationInput
+                        activeDuration={workout.activeDuration}
+                        isEditing={isEditing}
+                        onDurationChanged={handleUpdateWorkoutDuration}
+                      />
+                      <div className="flex gap-2">
+                        <Button onClick={() => closeWorkout()}>Close</Button>
+                        <Button onClick={toggleEdit}>
+                          {isEditing ? "Stop Editing" : "Edit"}
+                        </Button>
+                      </div>
+                    </>
+                  )}
+
+                  {workout.status === "DRAFT" && (
+                    <>
+                      <DurationInput
+                        activeDuration={workout.activeDuration}
+                        isEditing={isEditing}
+                        onDurationChanged={handleUpdateWorkoutDuration}
+                      />
+                      <div className="flex gap-2">
+                        <Button onClick={() => closeWorkout()}>Discard</Button>
+                        <Button onClick={() => closeWorkout()}>Save</Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <WorkoutForm
+                  workout={workout}
+                  onDelete={() => setDeleteWorkoutOpen(true)}
+                  isEditing={isEditing}
+                />
+              </>
             )}
           </div>
         }
         title={workoutTitle}
         description={`Viewing workout ${workoutTitle}`}
       />
-      {children}
+
+      <CompleteWorkoutDialog
+        open={completeWorkoutDialogOpen}
+        onOpenChange={setCompleteWorkoutDialogOpen}
+        onConfirm={handleCompleteWorkout}
+        incomplete={hasIncompleteSets}
+      />
+
+      <DeleteActiveWorkoutDialog
+        isOpen={deleteWorkoutOpen}
+        onOpenChanged={setDeleteWorkoutOpen}
+        onConfirm={handleDeleteActiveWorkoutConfirm}
+      />
     </WorkoutModalContext.Provider>
   );
 }
