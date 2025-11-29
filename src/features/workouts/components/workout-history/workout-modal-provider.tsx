@@ -11,6 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 import {
   useCompleteWorkout,
   useDeleteActiveWorkout,
+  useDeleteWorkout,
   useInvalidateWorkout,
   useUpdateWorkout,
 } from "@/api/workouts/workout-mutations";
@@ -47,6 +48,7 @@ export default function WorkoutModalProvider({
     isLoading,
   } = useWorkout(workoutId || undefined);
   const completeWorkout = useCompleteWorkout();
+  const deleteWorkout = useDeleteWorkout();
   const deleteActiveWorkout = useDeleteActiveWorkout();
   const updateWorkout = useUpdateWorkout();
 
@@ -80,6 +82,24 @@ export default function WorkoutModalProvider({
     if (!workout) return;
 
     completeWorkout.mutate(workout.id);
+  };
+
+  const handleSaveWorkout = () => {
+    if (!workout) return;
+    completeWorkout.mutate(workout.id, {
+      onSuccess: () => {
+        closeWorkout();
+      },
+    });
+  };
+
+  const handleDiscardWorkout = () => {
+    if (!workout) return;
+    deleteWorkout.mutate(workout.id, {
+      onSuccess: () => {
+        closeWorkout();
+      },
+    });
   };
 
   const handleDeleteActiveWorkoutConfirm = () => {
@@ -131,7 +151,7 @@ export default function WorkoutModalProvider({
                         onDurationChanged={handleUpdateWorkoutDuration}
                       />
                       <div className="flex gap-2">
-                        <Button onClick={() => closeWorkout()}>Close</Button>
+                        <Button onClick={closeWorkout}>Close</Button>
                         <Button onClick={toggleEdit}>
                           {isEditing ? "Stop Editing" : "Edit"}
                         </Button>
@@ -147,8 +167,8 @@ export default function WorkoutModalProvider({
                         onDurationChanged={handleUpdateWorkoutDuration}
                       />
                       <div className="flex gap-2">
-                        <Button onClick={() => closeWorkout()}>Discard</Button>
-                        <Button onClick={() => closeWorkout()}>Save</Button>
+                        <Button onClick={handleDiscardWorkout}>Discard</Button>
+                        <Button onClick={handleSaveWorkout}>Save</Button>
                       </div>
                     </>
                   )}

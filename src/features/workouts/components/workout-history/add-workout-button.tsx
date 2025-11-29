@@ -1,20 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { toast } from "sonner";
 
-import {
-  useCompleteWorkout,
-  useCreateDraftWorkout,
-  useDeleteWorkout,
-} from "@/api/workouts/workout-mutations";
-import { useWorkout } from "@/api/workouts/queries";
+import { useCreateDraftWorkout } from "@/api/workouts/workout-mutations";
 import { Button } from "@/components/ui/button";
-import { ResponsiveModal } from "@/components/ui/responsive-modal";
-import WorkoutForm from "../workout-form/workout-form";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
-import { useSearchParamState } from "@/hooks/use-search-param-state";
 import { useWorkoutModal } from "./workout-modal-provider";
 
 interface AddWorkoutButtonProps extends React.ComponentProps<"button"> {
@@ -28,8 +19,6 @@ export default function AddWorkoutButton({
   ...props
 }: AddWorkoutButtonProps) {
   const createWorkout = useCreateDraftWorkout();
-  const completeWorkout = useCompleteWorkout();
-  const deleteWorkout = useDeleteWorkout();
   const { openWorkout } = useWorkoutModal();
 
   const handleAddWorkout = () => {
@@ -48,61 +37,15 @@ export default function AddWorkoutButton({
     );
   };
 
-  // const handleOpenChange = () => {
-  //   setOpen(false);
-  //   if (workout.data && workout.data.status === "DRAFT") {
-  //     deleteWorkout.mutate(workout.data.id);
-  //   }
-  // };
-
-  // const handleSaveWorkout = () => {
-  //   if (!workout.data) return;
-  //   completeWorkout.mutate(workout.data.id, {
-  //     onSuccess: () => {
-  //       setOpen(false);
-  //     },
-  //   });
-  // };
-
-  // const handleDiscardWorkout = () => {
-  //   if (!workout.data) return;
-  //   deleteWorkout.mutate(workout.data.id, {
-  //     onSuccess: () => {
-  //       setOpen(false);
-  //     },
-  //   });
-  // };
-
   return (
-    <>
-      {/* {createWorkout.isSuccess && (
-        <ResponsiveModal
-          isOpen={open}
-          onOpenChange={handleOpenChange}
-          content={
-            <div className="px-4">
-              {workout.data && (
-                <WorkoutForm
-                  workout={workout.data}
-                  onClose={handleDiscardWorkout}
-                  onSuccess={handleSaveWorkout}
-                />
-              )}
-            </div>
-          }
-          title="Add workout"
-          description="Add workout"
-        />
-      )} */}
-      <Button
-        className={cn("", className)}
-        onClick={handleAddWorkout}
-        disabled={createWorkout.isPending}
-        {...props}
-      >
-        {createWorkout.isPending && <Spinner />}
-        {children ? children : "Add Workout"}
-      </Button>
-    </>
+    <Button
+      className={cn("", className)}
+      onClick={handleAddWorkout}
+      disabled={createWorkout.isPending}
+      {...props}
+    >
+      {createWorkout.isPending && <Spinner />}
+      {children ? children : "Add Workout"}
+    </Button>
   );
 }
