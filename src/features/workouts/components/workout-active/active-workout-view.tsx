@@ -6,10 +6,10 @@ import { MaximizeIcon, XIcon } from "lucide-react";
 import { useActiveWorkout, useWorkout } from "@/api/workouts/queries";
 import { Button } from "@/components/ui/button";
 import Timer from "@/components/ui/timer";
-import DeleteActiveWorkoutDialog from "./delete-active-workout-dialog";
+import DeleteActiveWorkoutDialog from "../workout-modal/delete-active-workout-dialog";
 import { parseWorkoutTitle } from "@/lib/utils";
 import { useDeleteWorkout } from "@/api/workouts/workout-mutations";
-import { useWorkoutModal } from "../workout-history/workout-modal-provider";
+import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function ActiveWorkoutView() {

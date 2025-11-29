@@ -20,7 +20,7 @@ import {
 import WorkoutHistoryItemDropdownMenu from "./workout-history-item-dropdown-menu";
 import { formatBestSet, formatTime, parseWorkoutTitle } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useWorkoutModal } from "./workout-modal-provider";
+import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
 import { Button } from "@/components/ui/button";
 
 interface WorkoutHistoryItemProps {

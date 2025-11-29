@@ -5,7 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import AuthGuard from "@/api/auth/auth-guard";
 import ActiveWorkoutView from "@/features/workouts/components/workout-active/active-workout-view";
 import Navigation from "./navigation";
-import WorkoutModalProvider from "@/features/workouts/components/workout-history/workout-modal-provider";
+import WorkoutModalProvider from "@/features/workouts/components/workout-modal/workout-modal-provider";
 
 interface CoreLayoutProps {
   children: React.ReactNode;

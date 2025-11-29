@@ -13,8 +13,8 @@ import {
   useDeleteWorkout,
   useInvalidateWorkout,
 } from "@/api/workouts/workout-mutations";
-import CompleteWorkoutDialog from "../workout-active/complete-workout-dialog";
-import DeleteActiveWorkoutDialog from "../workout-active/delete-active-workout-dialog";
+import CompleteWorkoutDialog from "./complete-workout-dialog";
+import DeleteActiveWorkoutDialog from "./delete-active-workout-dialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import WorkoutModalHeader from "./workout-modal-header";
