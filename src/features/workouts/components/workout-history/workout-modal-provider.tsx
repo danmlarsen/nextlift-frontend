@@ -6,7 +6,7 @@ import { ResponsiveModal } from "@/components/ui/responsive-modal";
 import { useSearchParamState } from "@/hooks/use-search-param-state";
 import WorkoutForm from "../workout-form/workout-form";
 import { useWorkout } from "@/api/workouts/queries";
-import { parseWorkoutTitle } from "@/lib/utils";
+import { cn, parseWorkoutTitle } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import {
   useCompleteWorkout,
@@ -129,7 +129,12 @@ export default function WorkoutModalProvider({
               </div>
             )}
             {isSuccess && workout && (
-              <div className="grid h-[calc(100dvh-50px)] grid-rows-[auto_1fr]">
+              <div
+                className={cn(
+                  "grid h-[calc(100dvh-42px)] grid-rows-[auto_1fr]",
+                  isDesktop && "h-[100dvh]",
+                )}
+              >
                 <WorkoutModalHeader
                   workout={workout}
                   onClickComplete={() => setCompleteWorkoutDialogOpen(true)}
@@ -137,7 +142,7 @@ export default function WorkoutModalProvider({
                   onClickSave={handleSaveWorkout}
                 />
 
-                <div className="overflow-y-auto px-4">
+                <div className="overflow-y-auto px-4 pb-4">
                   <WorkoutForm
                     workout={workout}
                     onDelete={() => setDeleteWorkoutOpen(true)}
