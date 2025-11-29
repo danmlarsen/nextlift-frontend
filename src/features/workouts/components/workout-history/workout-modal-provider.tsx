@@ -10,7 +10,6 @@ import { parseWorkoutTitle } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import {
   useCompleteWorkout,
-  useDeleteActiveWorkout,
   useDeleteWorkout,
   useInvalidateWorkout,
   useUpdateWorkout,
@@ -20,6 +19,7 @@ import DeleteActiveWorkoutDialog from "../workout-active/delete-active-workout-d
 import Timer from "@/components/ui/timer";
 import { Button } from "@/components/ui/button";
 import DurationInput from "@/components/duration-input";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface WorkoutModalProviderContextValue {
   openWorkout: (workoutId: number, editing?: boolean) => void;
@@ -49,8 +49,8 @@ export default function WorkoutModalProvider({
   } = useWorkout(workoutId || undefined);
   const completeWorkout = useCompleteWorkout();
   const deleteWorkout = useDeleteWorkout();
-  const deleteActiveWorkout = useDeleteActiveWorkout();
   const updateWorkout = useUpdateWorkout();
+  const queryClient = useQueryClient();
 
   const workoutTitle = workout ? parseWorkoutTitle(workout) : "Loading...";
   const hasIncompleteSets = workout
@@ -80,8 +80,14 @@ export default function WorkoutModalProvider({
 
   const handleCompleteWorkout = () => {
     if (!workout) return;
+    setCompleteWorkoutDialogOpen(false);
 
-    completeWorkout.mutate(workout.id);
+    completeWorkout.mutate(workout.id, {
+      onSuccess: () => {
+        closeWorkout();
+        queryClient.setQueryData(["activeWorkout"], null);
+      },
+    });
   };
 
   const handleSaveWorkout = () => {
@@ -93,17 +99,16 @@ export default function WorkoutModalProvider({
     });
   };
 
-  const handleDiscardWorkout = () => {
+  const handleDeleteWorkout = () => {
     if (!workout) return;
+    closeWorkout();
     deleteWorkout.mutate(workout.id, {
-      onSuccess: () => {
-        closeWorkout();
+      onSuccess: (data) => {
+        if (data.status === "ACTIVE") {
+          queryClient.removeQueries({ queryKey: ["activeWorkout"] });
+        }
       },
     });
-  };
-
-  const handleDeleteActiveWorkoutConfirm = () => {
-    deleteActiveWorkout.mutate();
   };
 
   const handleUpdateWorkoutDuration = (duration: number) => {
@@ -167,7 +172,7 @@ export default function WorkoutModalProvider({
                         onDurationChanged={handleUpdateWorkoutDuration}
                       />
                       <div className="flex gap-2">
-                        <Button onClick={handleDiscardWorkout}>Discard</Button>
+                        <Button onClick={handleDeleteWorkout}>Discard</Button>
                         <Button onClick={handleSaveWorkout}>Save</Button>
                       </div>
                     </>
@@ -197,7 +202,7 @@ export default function WorkoutModalProvider({
       <DeleteActiveWorkoutDialog
         isOpen={deleteWorkoutOpen}
         onOpenChanged={setDeleteWorkoutOpen}
-        onConfirm={handleDeleteActiveWorkoutConfirm}
+        onConfirm={handleDeleteWorkout}
       />
     </WorkoutModalContext.Provider>
   );

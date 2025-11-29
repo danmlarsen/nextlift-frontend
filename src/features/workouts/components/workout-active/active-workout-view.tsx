@@ -8,19 +8,25 @@ import { Button } from "@/components/ui/button";
 import Timer from "@/components/ui/timer";
 import DeleteActiveWorkoutDialog from "./delete-active-workout-dialog";
 import { parseWorkoutTitle } from "@/lib/utils";
-import { useDeleteActiveWorkout } from "@/api/workouts/workout-mutations";
+import { useDeleteWorkout } from "@/api/workouts/workout-mutations";
 import { useWorkoutModal } from "../workout-history/workout-modal-provider";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ActiveWorkoutView() {
   const [deleteWorkoutOpen, setDeleteWorkoutOpen] = useState(false);
   const { openWorkout } = useWorkoutModal();
   const { data: activeWorkout } = useActiveWorkout();
   const { data: workout } = useWorkout(activeWorkout?.id);
-  const deleteActiveWorkout = useDeleteActiveWorkout();
+  const deleteWorkout = useDeleteWorkout();
+  const queryClient = useQueryClient();
 
   const handleDeleteWorkoutConfirm = () => {
-    // setActiveWorkoutOpen(false);
-    deleteActiveWorkout.mutate();
+    if (!activeWorkout) return;
+    deleteWorkout.mutate(activeWorkout.id, {
+      onSuccess: () => {
+        queryClient.setQueryData(["activeWorkout"], null);
+      },
+    });
   };
 
   return (

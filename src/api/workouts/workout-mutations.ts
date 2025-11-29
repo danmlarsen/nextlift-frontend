@@ -84,21 +84,21 @@ export function useCompleteWorkout() {
 //   });
 // }
 
-export function useDeleteActiveWorkout() {
-  const { apiClient } = useApiClient();
-  const queryClient = useQueryClient();
+// export function useDeleteActiveWorkout() {
+//   const { apiClient } = useApiClient();
+//   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: () =>
-      apiClient<WorkoutData>("/workouts/active", {
-        method: "DELETE",
-      }),
-    onSuccess: (deletedWorkout) => {
-      queryClient.setQueryData(["activeWorkout"], null);
-      queryClient.setQueryData(["workout", { id: deletedWorkout.id }], null);
-    },
-  });
-}
+//   return useMutation({
+//     mutationFn: () =>
+//       apiClient<WorkoutData>("/workouts/active", {
+//         method: "DELETE",
+//       }),
+//     onSuccess: (deletedWorkout) => {
+//       queryClient.setQueryData(["activeWorkout"], null);
+//       queryClient.setQueryData(["workout", { id: deletedWorkout.id }], null);
+//     },
+//   });
+// }
 
 export function useUpdateWorkout() {
   const { apiClient } = useApiClient();

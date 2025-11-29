@@ -51,7 +51,6 @@ export function useActiveWorkout() {
   return useQuery<WorkoutData | null>({
     queryKey: ["activeWorkout"],
     queryFn: () => apiClient<WorkoutData | null>("/workouts/active"),
-    staleTime: 0,
   });
 }
 
