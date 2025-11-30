@@ -13,7 +13,7 @@ export default function AddNewExerciseButton() {
       <ResponsiveModal
         isOpen={isOpen}
         onOpenChange={setIsOpen}
-        className="px-4"
+        className="p-4"
         content={<ExerciseForm onSuccess={() => setIsOpen(false)} />}
         title="Add New Exercise"
         description="Add a custom Exercise"

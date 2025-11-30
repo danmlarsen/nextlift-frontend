@@ -38,10 +38,8 @@ export default function AddExerciseButton({
         onOpenChange={setIsOpen}
         title="Add Exercise"
         content={
-          <div className="relative">
-            <div className="p-4">
-              <ExercisesView onExerciseClick={handleExerciseClick} />
-            </div>
+          <div className="relative grid h-full overflow-y-auto p-4">
+            <ExercisesView onExerciseClick={handleExerciseClick} />
             {addWorkoutExercise.isPending && (
               <div className="fixed inset-0 z-50 bg-black/50">
                 <Spinner className="absolute top-1/2 left-1/2 z-50 size-6 -translate-x-1/2 -translate-y-1/2" />

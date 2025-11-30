@@ -23,6 +23,7 @@ export default function ExerciseDetailsModal({
     <ResponsiveModal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
+      className="py-4"
       content={
         exercise && (
           <ExerciseDetails

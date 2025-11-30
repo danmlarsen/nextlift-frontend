@@ -53,7 +53,7 @@ export function ResponsiveModal({
             <SheetDescription>{description}</SheetDescription>
           </SheetHeader>
           <div
-            className={cn("overflow-y-auto", className)}
+            className={cn("grid h-[100dvh] overflow-y-auto", className)}
             ref={scrollParentRef}
           >
             {content}
@@ -77,7 +77,7 @@ export function ResponsiveModal({
             <DrawerDescription>{description}</DrawerDescription>
           </DrawerHeader>
           <div
-            className={cn("overflow-y-auto", className)}
+            className={cn("grid h-[100dvh] overflow-y-auto", className)}
             ref={scrollParentRef}
           >
             {content}
