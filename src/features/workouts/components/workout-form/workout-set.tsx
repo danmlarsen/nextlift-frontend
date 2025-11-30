@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import WorkoutSetOptionsButton from "./workout-set-options-button";
-import { useWorkoutFormContext } from "./workout-form";
+import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
 
 interface WorkoutSetProps {
   workoutSet: WorkoutSetData;
@@ -57,7 +57,7 @@ export default function WorkoutSet({
   const [duration, setDuration] = useState(
     workoutSet?.duration?.toString() || "",
   );
-  const { workout, isEditing } = useWorkoutFormContext();
+  const { workout, isEditing } = useWorkoutModal();
   const isPendingDelete = useMutationState({
     filters: {
       mutationKey: ["deleteWorkoutSet"],
@@ -66,15 +66,17 @@ export default function WorkoutSet({
     select: (mutation) => mutation.state.variables as { setId: number },
   }).some((set) => set.setId === workoutSet.id);
 
-  const workoutId = workout.id;
+  const workoutId = workout?.id;
   const { mutate } = useUpdateWorkoutSet();
-  const updateWorkoutSet = (payload: WorkoutSetDto) =>
+  const updateWorkoutSet = (payload: WorkoutSetDto) => {
+    if (!workoutId) return;
     mutate({
       workoutId,
       workoutExerciseId: workoutSet.workoutExerciseId,
       setId: workoutSet.id,
       data: payload,
     });
+  };
 
   const debouncedUpdateWeight = useDebouncedCallback(
     (weight: number | null) => {

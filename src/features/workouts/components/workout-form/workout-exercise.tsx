@@ -26,9 +26,9 @@ import {
 import { ExerciseData } from "@/api/exercises/types";
 import WorkoutExerciseOptionsButton from "./workout-exercise-options-button";
 import WorkoutNotes from "./workout-notes";
-import { useWorkoutFormContext } from "./workout-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAddWorkoutSet } from "@/api/workouts/workout-set-mutations";
+import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
 
 interface WorkoutExerciseProps {
   workoutExercise: WorkoutExerciseData;
@@ -40,7 +40,7 @@ export default function WorkoutExercise({
   onOpenExercise,
 }: WorkoutExerciseProps) {
   const [notesOpen, setNotesOpen] = useState(false);
-  const { isEditing } = useWorkoutFormContext();
+  const { isEditing } = useWorkoutModal();
   const addWorkoutSet = useAddWorkoutSet();
   const updateWorkoutExercise = useUpdateWorkoutExercise();
   const deleteWorkoutExercise = useDeleteWorkoutExercise();

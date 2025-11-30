@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { useState } from "react";
 
 import AddExerciseButton from "./add-exercise-button";
 import { useUpdateWorkout } from "@/api/workouts/workout-mutations";
@@ -19,14 +19,6 @@ interface WorkoutFormProps {
   onDelete?: () => void;
   isEditing?: boolean;
 }
-
-export type WorkoutFormContextValue = {
-  workout: WorkoutData;
-  isActiveWorkout: boolean;
-  isEditing: boolean;
-};
-
-const WorkoutFormContext = createContext<WorkoutFormContextValue | null>(null);
 
 export default function WorkoutForm({
   workout,
@@ -59,13 +51,7 @@ export default function WorkoutForm({
   };
 
   return (
-    <WorkoutFormContext.Provider
-      value={{
-        workout,
-        isActiveWorkout,
-        isEditing,
-      }}
-    >
+    <>
       <ExerciseDetailsModal
         isOpen={exerciseModalOpen}
         onOpenChange={setExerciseModalOpen}
@@ -130,14 +116,6 @@ export default function WorkoutForm({
           </Button>
         )}
       </div>
-    </WorkoutFormContext.Provider>
+    </>
   );
 }
-
-export const useWorkoutFormContext = () => {
-  const context = useContext(WorkoutFormContext);
-  if (!context) {
-    throw new Error("useWorkoutFormContext must be used within WorkoutForm");
-  }
-  return context;
-};

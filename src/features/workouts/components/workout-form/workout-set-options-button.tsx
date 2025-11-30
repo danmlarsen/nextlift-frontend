@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useWorkoutFormContext } from "./workout-form";
+import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
 
 interface WorkoutSetOptionsButtonProps {
   workoutSet: WorkoutSetData;
@@ -21,11 +21,11 @@ interface WorkoutSetOptionsButtonProps {
 export default function WorkoutSetOptionsButton({
   workoutSet,
 }: WorkoutSetOptionsButtonProps) {
-  const { workout, isEditing } = useWorkoutFormContext();
+  const { workout, isEditing } = useWorkoutModal();
   const updateWorkoutSet = useUpdateWorkoutSet();
   const deleteWorkoutSet = useDeleteWorkoutSet();
 
-  const workoutId = workout.id;
+  const workoutId = workout?.id;
 
   return (
     <DropdownMenu>
@@ -51,7 +51,9 @@ export default function WorkoutSetOptionsButton({
         {WORKOUT_SET_TYPES.map((type) => (
           <DropdownMenuItem asChild key={type}>
             <Button
-              onClick={() =>
+              onClick={() => {
+                if (!workoutId) return;
+
                 updateWorkoutSet.mutate({
                   workoutId,
                   workoutExerciseId: workoutSet.workoutExerciseId,
@@ -59,8 +61,8 @@ export default function WorkoutSetOptionsButton({
                   data: {
                     type,
                   },
-                })
-              }
+                });
+              }}
               variant="ghost"
               className="flex w-full justify-start gap-2 px-1 capitalize"
             >
@@ -90,13 +92,15 @@ export default function WorkoutSetOptionsButton({
         ))}
         <DropdownMenuItem asChild>
           <Button
-            onClick={() =>
+            onClick={() => {
+              if (!workoutId) return;
+
               deleteWorkoutSet.mutate({
                 workoutId,
                 workoutExerciseId: workoutSet.workoutExerciseId,
                 setId: workoutSet.id,
-              })
-            }
+              });
+            }}
             variant="ghost"
             className="flex w-full justify-start gap-2 px-1 capitalize"
           >

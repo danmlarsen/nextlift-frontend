@@ -6,7 +6,7 @@ import { PencilIcon, TrashIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import WorkoutNotesDialog from "./workout-notes-dialog";
 import WorkoutNotesDeleteDialog from "./workout-notes-delete-dialog";
-import { useWorkoutFormContext } from "./workout-form";
+import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
 
 interface WorkoutNotesProps {
   notes: string | null;
@@ -24,7 +24,7 @@ export default function WorkoutNotes({
   showPlaceholder = false,
 }: WorkoutNotesProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const { isEditing } = useWorkoutFormContext();
+  const { isEditing } = useWorkoutModal();
 
   const handleUpdateNotes = (notes: string) => {
     onUpdate(notes);

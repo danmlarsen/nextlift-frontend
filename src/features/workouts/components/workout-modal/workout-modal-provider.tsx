@@ -18,8 +18,10 @@ import DeleteActiveWorkoutDialog from "./delete-active-workout-dialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import WorkoutModalHeader from "./workout-modal-header";
+import { WorkoutData } from "@/api/workouts/types";
 
 interface WorkoutModalProviderContextValue {
+  workout?: WorkoutData;
   openWorkout: (workoutId: number, editing?: boolean) => void;
   closeWorkout: () => void;
   isEditing: boolean;
@@ -114,7 +116,7 @@ export default function WorkoutModalProvider({
 
   return (
     <WorkoutModalContext.Provider
-      value={{ openWorkout, closeWorkout, toggleEdit, isEditing }}
+      value={{ workout, openWorkout, closeWorkout, toggleEdit, isEditing }}
     >
       {children}
 
