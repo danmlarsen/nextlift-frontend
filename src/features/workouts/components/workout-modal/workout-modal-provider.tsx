@@ -49,6 +49,7 @@ export default function WorkoutModalProvider({
     data: workout,
     isSuccess,
     isLoading,
+    isError,
   } = useWorkout(workoutId || undefined);
   const completeWorkout = useCompleteWorkout();
   const deleteWorkout = useDeleteWorkout();
@@ -128,6 +129,11 @@ export default function WorkoutModalProvider({
             {workoutId && isLoading && (
               <div className="flex items-center justify-center py-8">
                 <Spinner />
+              </div>
+            )}
+            {isError && (
+              <div className="text-muted-foreground flex items-center justify-center py-8">
+                Error loading workout
               </div>
             )}
             {isSuccess && workout && (
