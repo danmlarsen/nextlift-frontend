@@ -139,8 +139,8 @@ export default function WorkoutModalProvider({
             {isSuccess && workout && (
               <div
                 className={cn(
-                  "grid h-[calc(100dvh-42px)] grid-rows-[auto_1fr]",
-                  isDesktop && "h-[100dvh]",
+                  "grid h-[calc(100dvh-42px)] grid-rows-[auto_1fr] pb-4",
+                  isDesktop && "h-[100dvh] pt-4",
                 )}
               >
                 <WorkoutModalHeader
@@ -150,7 +150,7 @@ export default function WorkoutModalProvider({
                   onClickSave={handleSaveWorkout}
                 />
 
-                <div className="overflow-y-auto px-4 pb-4">
+                <div className="overflow-y-auto px-4">
                   <WorkoutForm
                     workout={workout}
                     onDelete={() => setDeleteWorkoutOpen(true)}

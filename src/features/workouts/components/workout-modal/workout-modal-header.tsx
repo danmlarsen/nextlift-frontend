@@ -33,7 +33,7 @@ export default function WorkoutModalHeader({
   };
 
   return (
-    <div className="flex items-center justify-between p-4">
+    <div className="flex items-center justify-between px-4 pb-4">
       {workout.status === "ACTIVE" && (
         <>
           <Timer workout={workout} isButton={true} />
