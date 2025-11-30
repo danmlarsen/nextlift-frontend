@@ -3,7 +3,7 @@
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import AuthGuard from "@/api/auth/auth-guard";
-import ActiveWorkoutView from "@/features/workouts/components/workout-active/active-workout-view";
+import ActiveWorkoutView from "@/features/workouts/components/active-workout-overlay";
 import Navigation from "./navigation";
 import WorkoutModalProvider from "@/features/workouts/components/workout-modal/workout-modal-provider";
 

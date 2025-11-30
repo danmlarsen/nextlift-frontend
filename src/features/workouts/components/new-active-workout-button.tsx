@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { useActiveWorkout } from "@/api/workouts/queries";
 import { useCreateActiveWorkout } from "@/api/workouts/workout-mutations";
 import { Spinner } from "@/components/ui/spinner";
-import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
+import { useWorkoutModal } from "./workout-modal/workout-modal-provider";
 
-export default function NewWorkoutButton() {
+export default function NewActiveWorkoutButton() {
   const { data: activeWorkout } = useActiveWorkout();
   const createActiveWorkout = useCreateActiveWorkout();
   const { openWorkout } = useWorkoutModal();

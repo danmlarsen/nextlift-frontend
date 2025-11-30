@@ -1,7 +1,7 @@
-import NewWorkoutButton from "../../../features/workouts/components/workout-active/new-workout-button";
 import AddWorkoutButton from "@/features/workouts/components/workout-history/add-workout-button";
 import LifetimeWorkoutsStats from "./lifetime-workouts-stats";
 import WeeklyReportStats from "./weekly-report-stats";
+import NewActiveWorkoutButton from "../../../features/workouts/components/new-active-workout-button";
 
 export default function HomePage() {
   return (
@@ -11,7 +11,7 @@ export default function HomePage() {
       </div>
       <div className="grid gap-4 sm:grid-cols-[1fr_15rem] sm:gap-8 lg:grid-cols-[1fr_16rem]">
         <div className="space-y-4 sm:col-start-2 sm:row-start-1">
-          <NewWorkoutButton />
+          <NewActiveWorkoutButton />
           <AddWorkoutButton className="w-full">Add Workout</AddWorkoutButton>
         </div>
         <div className="space-y-4 sm:col-start-1 sm:row-start-1">
