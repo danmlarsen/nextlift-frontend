@@ -121,7 +121,7 @@ export default function WorkoutModalProvider({
       {children}
 
       <ResponsiveModal
-        isOpen={isOpen}
+        isOpen={isOpen && !!workoutId}
         onOpenChange={closeWorkout}
         content={
           <>
