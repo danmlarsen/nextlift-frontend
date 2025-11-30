@@ -6,18 +6,18 @@ import { useCreateDraftWorkout } from "@/api/workouts/workout-mutations";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
-import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
+import { useWorkoutModal } from "./workout-modal/workout-modal-provider";
 
-interface AddWorkoutButtonProps extends React.ComponentProps<"button"> {
+interface NewDraftWorkoutButtonProps extends React.ComponentProps<"button"> {
   selectedDate?: Date;
 }
 
-export default function AddWorkoutButton({
+export default function NewDraftWorkoutButton({
   selectedDate,
   className,
   children,
   ...props
-}: AddWorkoutButtonProps) {
+}: NewDraftWorkoutButtonProps) {
   const createWorkout = useCreateDraftWorkout();
   const { openWorkout } = useWorkoutModal();
 

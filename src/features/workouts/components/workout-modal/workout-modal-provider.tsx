@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 
 import { ResponsiveModal } from "@/components/ui/responsive-modal";
 import { useSearchParamState } from "@/hooks/use-search-param-state";
-import WorkoutForm from "../workout-form/workout-form";
+import WorkoutForm from "./workout-modal-body";
 import { useWorkout } from "@/api/workouts/queries";
 import { cn, parseWorkoutTitle } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
@@ -13,7 +13,7 @@ import {
   useDeleteWorkout,
   useInvalidateWorkout,
 } from "@/api/workouts/workout-mutations";
-import CompleteWorkoutDialog from "./complete-workout-dialog";
+import CompleteWorkoutDialog from "./complete-active-workout-dialog";
 import DeleteActiveWorkoutDialog from "./delete-active-workout-dialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/use-media-query";

@@ -11,7 +11,7 @@ import WorkoutHistoryItem, {
   WorkoutHistoryItemSkeleton,
 } from "./workout-history-item";
 import WorkoutHistoryCalendar from "./workout-history-calendar";
-import AddWorkoutButton from "./add-workout-button";
+import AddWorkoutButton from "../new-draft-workout-button";
 import { WORKOUT_LIST_ITEM_AMOUNT } from "@/lib/constants";
 
 export default function WorkoutHistory() {

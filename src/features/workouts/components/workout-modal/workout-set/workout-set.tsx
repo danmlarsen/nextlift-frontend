@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import WorkoutSetOptionsButton from "./workout-set-options-button";
-import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
+import { useWorkoutModal } from "../workout-modal-provider";
 
 interface WorkoutSetProps {
   workoutSet: WorkoutSetData;

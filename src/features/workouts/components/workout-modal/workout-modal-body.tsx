@@ -2,29 +2,29 @@
 
 import { useState } from "react";
 
-import AddExerciseButton from "./add-exercise-button";
+import AddExerciseButton from "./workout-exercise/add-exercise-button";
 import { useUpdateWorkout } from "@/api/workouts/workout-mutations";
 import { Button } from "@/components/ui/button";
-import WorkoutExercise from "./workout-exercise";
+import WorkoutExercise from "./workout-exercise/workout-exercise";
 import EditWorkoutNameButton from "./edit-workout-name-button";
 import { type WorkoutData } from "@/api/workouts/types";
 import { type ExerciseData } from "@/api/exercises/types";
-import WorkoutNotes from "./workout-notes";
+import WorkoutNotes from "./workout-notes/workout-notes";
 import { parseWorkoutTitle } from "@/lib/utils";
 import DatePicker from "@/components/date-picker";
 import ExerciseDetailsModal from "@/features/exercises/components/exercise-details/exercise-details-modal";
 
-interface WorkoutFormProps {
+interface WorkoutModalBodyProps {
   workout: WorkoutData;
   onDelete?: () => void;
   isEditing?: boolean;
 }
 
-export default function WorkoutForm({
+export default function WorkoutModalBody({
   workout,
   onDelete,
   isEditing = true,
-}: WorkoutFormProps) {
+}: WorkoutModalBodyProps) {
   const [workoutNotesOpen, setWorkoutNotesOpen] = useState(false);
   const [exerciseModalOpen, setExerciseModalOpen] = useState(false);
   const [selectedWorkoutExercise, setSelectedWorkoutExercise] = useState<

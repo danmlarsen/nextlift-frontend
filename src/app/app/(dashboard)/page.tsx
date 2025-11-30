@@ -1,4 +1,4 @@
-import AddWorkoutButton from "@/features/workouts/components/workout-history/add-workout-button";
+import AddWorkoutButton from "@/features/workouts/components/new-draft-workout-button";
 import LifetimeWorkoutsStats from "./lifetime-workouts-stats";
 import WeeklyReportStats from "./weekly-report-stats";
 import NewActiveWorkoutButton from "../../../features/workouts/components/new-active-workout-button";

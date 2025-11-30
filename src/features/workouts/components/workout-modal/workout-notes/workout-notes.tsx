@@ -6,7 +6,7 @@ import { PencilIcon, TrashIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import WorkoutNotesDialog from "./workout-notes-dialog";
 import WorkoutNotesDeleteDialog from "./workout-notes-delete-dialog";
-import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
+import { useWorkoutModal } from "../workout-modal-provider";
 
 interface WorkoutNotesProps {
   notes: string | null;

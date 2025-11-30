@@ -5,7 +5,7 @@ import { useMutationState } from "@tanstack/react-query";
 import { ChevronRightIcon } from "lucide-react";
 
 import { type WorkoutExerciseData } from "@/api/workouts/types";
-import WorkoutSet from "./workout-set";
+import WorkoutSet from "../workout-set/workout-set";
 import {
   useDeleteWorkoutExercise,
   useUpdateWorkoutExercise,
@@ -25,10 +25,10 @@ import {
 } from "@/lib/utils";
 import { ExerciseData } from "@/api/exercises/types";
 import WorkoutExerciseOptionsButton from "./workout-exercise-options-button";
-import WorkoutNotes from "./workout-notes";
+import WorkoutNotes from "../workout-notes/workout-notes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAddWorkoutSet } from "@/api/workouts/workout-set-mutations";
-import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
+import { useWorkoutModal } from "../workout-modal-provider";
 
 interface WorkoutExerciseProps {
   workoutExercise: WorkoutExerciseData;

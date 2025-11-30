@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
+import { useWorkoutModal } from "../../workout-modal/workout-modal-provider";
 
 interface WorkoutSetOptionsButtonProps {
   workoutSet: WorkoutSetData;
