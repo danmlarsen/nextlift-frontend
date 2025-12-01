@@ -83,121 +83,44 @@ export function formatBestSet(bestSet: WorkoutExerciseBestSet | null): string {
   return "";
 }
 
-export function findBestWorkoutSetWithIndex(workoutSets: WorkoutSetData[]): {
-  bestSet: WorkoutSetData | null;
-  bestSetIndex: number;
-} {
-  let bestSet: WorkoutSetData | null = null;
-  let bestSetIndex = -1;
-
-  workoutSets.forEach((set, index) => {
-    if (set.weight && set.reps && set.weight > 0 && set.reps > 0) {
-      if (!bestSet) {
-        bestSet = set;
-        bestSetIndex = index;
-      } else {
-        const currentVolume = (set.weight || 0) * (set.reps || 0);
-        const currentOneRM = calculateOneRepMax(set.weight || 0, set.reps || 0);
-
-        const bestVolume = (bestSet.weight || 0) * (bestSet.reps || 0);
-        const bestOneRM = calculateOneRepMax(
-          bestSet.weight || 0,
-          bestSet.reps || 0,
-        );
-
-        // Prioritize 1RM, then volume as tiebreaker
-        if (
-          currentOneRM > bestOneRM ||
-          (currentOneRM === bestOneRM && currentVolume > bestVolume)
-        ) {
-          bestSet = set;
-          bestSetIndex = index;
-        }
-      }
-    }
-  });
-
-  return { bestSet, bestSetIndex };
-}
-
-export function isSetBetter(
-  currentSet: WorkoutSetData,
-  referenceSet: WorkoutSetData,
-): boolean {
-  const currentOneRM = calculateOneRepMax(
-    currentSet.weight || 0,
-    currentSet.reps || 0,
-  );
-  const referenceOneRM = calculateOneRepMax(
-    referenceSet.weight || 0,
-    referenceSet.reps || 0,
-  );
-
-  const currentVolume = (currentSet.weight || 0) * (currentSet.reps || 0);
-  const referenceVolume = (referenceSet.weight || 0) * (referenceSet.reps || 0);
-
+export function isValidCompletedSet(set: WorkoutSetData | undefined): boolean {
   return (
-    currentOneRM > referenceOneRM ||
-    (currentOneRM === referenceOneRM && currentVolume > referenceVolume)
+    !!set &&
+    !!set.completed &&
+    ((typeof set.weight === "number" &&
+      typeof set.reps === "number" &&
+      set.weight > 0 &&
+      set.reps > 0) ||
+      (typeof set.duration === "number" && set.duration > 0))
   );
 }
 
 export function getPlaceholderWorkoutSet(
   setIndex: number,
-  bestCurrentSet: WorkoutSetData | null,
-  bestSetIndex: number,
   previousWorkoutSets: WorkoutSetData[] | undefined,
   currentWorkoutSets?: WorkoutSetData[],
 ): WorkoutSetData | undefined {
-  // Only use current workout's best set for subsequent sets
-  if (
-    bestCurrentSet &&
-    bestSetIndex >= 0 &&
-    setIndex > bestSetIndex &&
-    previousWorkoutSets
-  ) {
-    const previousSet = previousWorkoutSets[setIndex];
-    const lastPreviousSet = previousWorkoutSets[previousWorkoutSets.length - 1];
-    const referenceSet = previousSet || lastPreviousSet;
+  // Find the most recent valid completed set in current or previous workout
+  const completedSets = currentWorkoutSets?.filter(isValidCompletedSet) ?? [];
+  const placeholderSet =
+    completedSets.length > 0
+      ? completedSets[completedSets.length - 1]
+      : (previousWorkoutSets?.[setIndex] ??
+        previousWorkoutSets?.[previousWorkoutSets.length - 1]);
 
-    if (referenceSet && isSetBetter(bestCurrentSet, referenceSet)) {
-      return bestCurrentSet;
-    }
+  const currentSet = currentWorkoutSets?.[setIndex];
+  if (currentSet?.completed) {
+    return placeholderSet
+      ? {
+          ...currentSet,
+          weight: currentSet.weight ?? placeholderSet.weight,
+          reps: currentSet.reps ?? placeholderSet.reps,
+          duration: currentSet.duration ?? placeholderSet.duration,
+        }
+      : currentSet;
   }
 
-  // Fall back to previous workout logic for all other cases
-  if (previousWorkoutSets) {
-    return (
-      previousWorkoutSets[setIndex] ||
-      previousWorkoutSets[previousWorkoutSets.length - 1]
-    );
-  }
-
-  // Check for completed sets in current workout exercise
-  if (currentWorkoutSets && currentWorkoutSets.length > 0) {
-    // Filter for completed sets with data (weight/reps or duration)
-    const completedSets = currentWorkoutSets.filter(
-      (set) =>
-        set.completed &&
-        ((set.weight && set.reps && set.weight > 0 && set.reps > 0) ||
-          (set.duration && set.duration > 0)),
-    );
-
-    if (completedSets.length > 0) {
-      // Return the most recent completed set, or the set at the same index if it exists
-      const sameIndexSet = completedSets.find(
-        (set) => set.setNumber === setIndex + 1,
-      );
-      if (sameIndexSet) {
-        return sameIndexSet;
-      }
-
-      // Otherwise return the last completed set
-      return completedSets[completedSets.length - 1];
-    }
-  }
-
-  return undefined;
+  return placeholderSet;
 }
 
 export function parseWorkoutTitle(

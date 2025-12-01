@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useMutationState } from "@tanstack/react-query";
 import { ChevronRightIcon } from "lucide-react";
 
@@ -19,10 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  findBestWorkoutSetWithIndex,
-  getPlaceholderWorkoutSet,
-} from "@/lib/utils";
+import { getPlaceholderWorkoutSet } from "@/lib/utils";
 import { ExerciseData } from "@/api/exercises/types";
 import WorkoutExerciseOptionsButton from "./workout-exercise-options-button";
 import WorkoutNotes from "../workout-notes/workout-notes";
@@ -65,12 +62,6 @@ export default function WorkoutExercise({
   const { workoutSets } = workoutExercise;
   const previousWorkoutSets =
     workoutExercise.previousWorkoutExercise?.workoutSets;
-
-  // Find the best performing set from current workout with its index
-  const bestCurrentSetInfo = useMemo(
-    () => findBestWorkoutSetWithIndex(workoutSets),
-    [workoutSets],
-  );
 
   const handleAddWorkoutSet = () => {
     vibrate();
@@ -144,13 +135,10 @@ export default function WorkoutExercise({
         </TableHeader>
         <TableBody className="text-center">
           {workoutSets.map((workoutSet, index) => {
-            const { bestSet, bestSetIndex } = bestCurrentSetInfo;
             const placeholderSet = getPlaceholderWorkoutSet(
               index,
-              bestSet,
-              bestSetIndex,
               previousWorkoutSets,
-              workoutExercise.workoutSets,
+              workoutSets,
             );
             const previousSet = previousWorkoutSets?.[index];
 
