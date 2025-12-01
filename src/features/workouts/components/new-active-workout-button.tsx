@@ -7,13 +7,17 @@ import { useActiveWorkout } from "@/api/workouts/queries";
 import { useCreateActiveWorkout } from "@/api/workouts/workout-mutations";
 import { Spinner } from "@/components/ui/spinner";
 import { useWorkoutModal } from "./workout-modal/workout-modal-provider";
+import { useHaptics } from "@/hooks/use-haptics";
 
 export default function NewActiveWorkoutButton() {
   const { data: activeWorkout } = useActiveWorkout();
   const createActiveWorkout = useCreateActiveWorkout();
   const { openWorkout } = useWorkoutModal();
+  const { vibrate } = useHaptics();
 
   const handleClick = () => {
+    vibrate();
+
     if (activeWorkout) {
       openWorkout(activeWorkout.id);
     } else {

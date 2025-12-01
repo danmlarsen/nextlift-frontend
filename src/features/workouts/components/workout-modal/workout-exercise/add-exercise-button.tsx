@@ -7,6 +7,7 @@ import { useAddWorkoutExercise } from "@/api/workouts/workout-exercise-mutations
 import ExercisesView from "@/features/exercises/components/exercises-view/exercises-view";
 import { ResponsiveModal } from "@/components/ui/responsive-modal";
 import { Spinner } from "@/components/ui/spinner";
+import { useHaptics } from "@/hooks/use-haptics";
 
 interface AddExerciseButtonProps {
   workoutId: number;
@@ -17,10 +18,17 @@ export default function AddExerciseButton({
 }: AddExerciseButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const addWorkoutExercise = useAddWorkoutExercise();
+  const { vibrate } = useHaptics();
+
+  const handleAddExerciseClick = () => {
+    vibrate();
+    setIsOpen(true);
+  };
 
   const handleExerciseClick = (exerciseId: number) => {
     if (addWorkoutExercise.isPending) return;
 
+    vibrate();
     addWorkoutExercise.mutate(
       { workoutId, exerciseId },
       {
@@ -48,7 +56,7 @@ export default function AddExerciseButton({
           </div>
         }
       />
-      <Button className="w-full" onClick={() => setIsOpen(true)}>
+      <Button className="w-full" onClick={handleAddExerciseClick}>
         + Add Exercise
       </Button>
     </>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useWorkoutModal } from "./workout-modal/workout-modal-provider";
+import { useHaptics } from "@/hooks/use-haptics";
 
 interface NewDraftWorkoutButtonProps extends React.ComponentProps<"button"> {
   selectedDate?: Date;
@@ -20,8 +21,10 @@ export default function NewDraftWorkoutButton({
 }: NewDraftWorkoutButtonProps) {
   const createWorkout = useCreateDraftWorkout();
   const { openWorkout } = useWorkoutModal();
+  const { vibrate } = useHaptics();
 
   const handleAddWorkout = () => {
+    vibrate();
     createWorkout.mutate(
       { startedAt: selectedDate?.toISOString() || undefined },
       {

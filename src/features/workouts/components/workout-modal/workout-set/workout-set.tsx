@@ -12,6 +12,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import WorkoutSetOptionsButton from "./workout-set-options-button";
 import { useWorkoutModal } from "../workout-modal-provider";
+import { useHaptics } from "@/hooks/use-haptics";
 
 interface WorkoutSetProps {
   workoutSet: WorkoutSetData;
@@ -57,6 +58,7 @@ export default function WorkoutSet({
   const [duration, setDuration] = useState(
     workoutSet?.duration?.toString() || "",
   );
+  const { vibrate } = useHaptics();
   const { workout, isEditing } = useWorkoutModal();
   const isPendingDelete = useMutationState({
     filters: {
@@ -97,6 +99,7 @@ export default function WorkoutSet({
   );
 
   const handleCheckedChange = (checkedChange: boolean) => {
+    vibrate();
     setIsChecked(checkedChange);
 
     debouncedUpdateWeight.cancel();

@@ -29,6 +29,7 @@ import WorkoutNotes from "../workout-notes/workout-notes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAddWorkoutSet } from "@/api/workouts/workout-set-mutations";
 import { useWorkoutModal } from "../workout-modal-provider";
+import { useHaptics } from "@/hooks/use-haptics";
 
 interface WorkoutExerciseProps {
   workoutExercise: WorkoutExerciseData;
@@ -44,6 +45,7 @@ export default function WorkoutExercise({
   const addWorkoutSet = useAddWorkoutSet();
   const updateWorkoutExercise = useUpdateWorkoutExercise();
   const deleteWorkoutExercise = useDeleteWorkoutExercise();
+  const { vibrate } = useHaptics();
 
   // Track pending add set mutations for this specific exercise
   const pendingAddSetCount = useMutationState({
@@ -71,6 +73,7 @@ export default function WorkoutExercise({
   );
 
   const handleAddWorkoutSet = () => {
+    vibrate();
     addWorkoutSet.mutate({
       workoutId: workoutExercise.workoutId,
       workoutExerciseId: workoutExercise.id,
