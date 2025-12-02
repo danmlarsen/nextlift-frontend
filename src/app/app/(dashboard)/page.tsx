@@ -1,4 +1,3 @@
-import AddWorkoutButton from "@/features/workouts/components/new-draft-workout-button";
 import LifetimeWorkoutsStats from "./lifetime-workouts-stats";
 import WeeklyReportStats from "./weekly-report-stats";
 import NewActiveWorkoutButton from "../../../features/workouts/components/new-active-workout-button";
@@ -12,7 +11,6 @@ export default function HomePage() {
       <div className="grid gap-4 sm:grid-cols-[1fr_15rem] sm:gap-8 lg:grid-cols-[1fr_16rem]">
         <div className="space-y-4 sm:col-start-2 sm:row-start-1">
           <NewActiveWorkoutButton />
-          <AddWorkoutButton className="w-full">Add Workout</AddWorkoutButton>
         </div>
         <div className="space-y-4 sm:col-start-1 sm:row-start-1">
           <LifetimeWorkoutsStats />
