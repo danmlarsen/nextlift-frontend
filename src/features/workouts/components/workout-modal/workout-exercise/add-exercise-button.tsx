@@ -8,6 +8,7 @@ import ExercisesView from "@/features/exercises/components/exercises-view/exerci
 import { ResponsiveModal } from "@/components/ui/responsive-modal";
 import { Spinner } from "@/components/ui/spinner";
 import { useHaptics } from "@/hooks/use-haptics";
+import { useSearchParamState } from "@/hooks/use-search-param-state";
 
 interface AddExerciseButtonProps {
   workoutId: number;
@@ -16,13 +17,14 @@ interface AddExerciseButtonProps {
 export default function AddExerciseButton({
   workoutId,
 }: AddExerciseButtonProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [exerciseModalOpen, setExerciseModalOpen] =
+    useSearchParamState("exercise-modal");
   const addWorkoutExercise = useAddWorkoutExercise();
   const { vibrate } = useHaptics();
 
   const handleAddExerciseClick = () => {
     vibrate();
-    setIsOpen(true);
+    setExerciseModalOpen(true);
   };
 
   const handleExerciseClick = (exerciseId: number) => {
@@ -33,7 +35,7 @@ export default function AddExerciseButton({
       { workoutId, exerciseId },
       {
         onSuccess: () => {
-          setIsOpen(false);
+          setExerciseModalOpen(false);
         },
       },
     );
@@ -42,8 +44,8 @@ export default function AddExerciseButton({
   return (
     <>
       <ResponsiveModal
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
+        isOpen={exerciseModalOpen}
+        onOpenChange={setExerciseModalOpen}
         title="Add Exercise"
         content={
           <div className="relative grid h-full overflow-y-auto p-4">
