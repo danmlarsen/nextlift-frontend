@@ -40,7 +40,7 @@ export default function ExerciseWorkoutsList({
       useWindow={!scrollParentRef}
       getScrollParent={() => scrollParentRef?.current || null}
     >
-      <ul className="space-y-4 overflow-y-auto px-4 pb-6">
+      <ul className="space-y-4 overflow-y-auto pb-6">
         {isLoading &&
           Array.from({ length: WORKOUT_LIST_ITEM_AMOUNT }).map((_, index) => (
             <li key={`initial-${index}`}>
