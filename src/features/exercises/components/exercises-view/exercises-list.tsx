@@ -25,8 +25,9 @@ export default function ExercisesList({
   const [selectedExercise, setSelectedExercise] = useState<
     ExerciseData | undefined
   >();
-  const [exerciseModalOpen, setExerciseModalOpen] =
-    useSearchParamState("exercise-modal");
+  const [exerciseDetailsModal, setExerciseDetailsModal] = useSearchParamState(
+    "exercise-details-modal",
+  );
   const {
     data,
     fetchNextPage,
@@ -45,15 +46,15 @@ export default function ExercisesList({
       onExerciseClick(exercise.id);
     } else {
       setSelectedExercise(exercise);
-      setExerciseModalOpen(true);
+      setExerciseDetailsModal(true);
     }
   };
 
   return (
     <>
       <ExerciseDetailsModal
-        isOpen={exerciseModalOpen}
-        onOpenChange={setExerciseModalOpen}
+        isOpen={exerciseDetailsModal}
+        onOpenChange={setExerciseDetailsModal}
         exercise={selectedExercise}
       />
 
