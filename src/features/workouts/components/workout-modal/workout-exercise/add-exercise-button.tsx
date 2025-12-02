@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import { useAddWorkoutExercise } from "@/api/workouts/workout-exercise-mutations";
 import ExercisesView from "@/features/exercises/components/exercises-view/exercises-view";
