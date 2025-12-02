@@ -13,6 +13,7 @@ import WorkoutNotes from "./workout-notes/workout-notes";
 import { parseWorkoutTitle } from "@/lib/utils";
 import DatePicker from "@/components/date-picker";
 import ExerciseDetailsModal from "@/features/exercises/components/exercise-details/exercise-details-modal";
+import { useSearchParamState } from "@/hooks/use-search-param-state";
 
 interface WorkoutModalBodyProps {
   workout: WorkoutData;
@@ -26,7 +27,9 @@ export default function WorkoutModalBody({
   isEditing = true,
 }: WorkoutModalBodyProps) {
   const [workoutNotesOpen, setWorkoutNotesOpen] = useState(false);
-  const [exerciseModalOpen, setExerciseModalOpen] = useState(false);
+  const [exerciseDetailsModal, setExerciseDetailsModal] = useSearchParamState(
+    "exercise-details-modal",
+  );
   const [selectedWorkoutExercise, setSelectedWorkoutExercise] = useState<
     ExerciseData | undefined
   >();
@@ -52,12 +55,6 @@ export default function WorkoutModalBody({
 
   return (
     <>
-      <ExerciseDetailsModal
-        isOpen={exerciseModalOpen}
-        onOpenChange={setExerciseModalOpen}
-        exercise={selectedWorkoutExercise}
-      />
-
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">{parseWorkoutTitle(workout)}</h1>
@@ -91,13 +88,14 @@ export default function WorkoutModalBody({
 
         {workout.workoutExercises && workout.workoutExercises.length > 0 && (
           <ul className="space-y-4">
-            {workout.workoutExercises.map((workoutExercise) => (
+            {workout.workoutExercises.map((workoutExercise, idx) => (
               <WorkoutExercise
                 key={workoutExercise.id}
+                exerciseNum={idx + 1}
                 workoutExercise={workoutExercise}
                 onOpenExercise={(exercise) => {
                   setSelectedWorkoutExercise(exercise);
-                  setExerciseModalOpen(true);
+                  setExerciseDetailsModal(true);
                 }}
               />
             ))}
@@ -116,6 +114,12 @@ export default function WorkoutModalBody({
           </Button>
         )}
       </div>
+
+      <ExerciseDetailsModal
+        isOpen={exerciseDetailsModal}
+        onOpenChange={setExerciseDetailsModal}
+        exercise={selectedWorkoutExercise}
+      />
     </>
   );
 }

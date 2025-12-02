@@ -29,11 +29,13 @@ import { useWorkoutModal } from "../workout-modal-provider";
 import { useHaptics } from "@/hooks/use-haptics";
 
 interface WorkoutExerciseProps {
+  exerciseNum: number;
   workoutExercise: WorkoutExerciseData;
   onOpenExercise: (exercise: ExerciseData) => void;
 }
 
 export default function WorkoutExercise({
+  exerciseNum,
   workoutExercise,
   onOpenExercise,
 }: WorkoutExerciseProps) {
@@ -87,7 +89,10 @@ export default function WorkoutExercise({
           onClick={() => onOpenExercise(workoutExercise.exercise)}
           variant="ghost"
         >
-          <h2 className="text-xl font-bold">{workoutExercise.exercise.name}</h2>
+          <h2 className="text-lg font-semibold">
+            <span>{exerciseNum}. </span>
+            {workoutExercise.exercise.name}
+          </h2>
           <ChevronRightIcon />
         </Button>
         {isEditing && (
