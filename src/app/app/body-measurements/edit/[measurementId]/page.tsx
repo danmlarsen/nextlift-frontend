@@ -1,23 +1,48 @@
 "use client";
 
+import {
+  useDeleteBodyMeasurement,
+  useEditBodyMeasurement,
+} from "@/api/body-measurements/mutations";
 import { useBodyMeasurement } from "@/api/body-measurements/queries";
 import { Card } from "@/components/ui/card";
 import BodyMeasurementForm, {
   bodyMeasurementSchema,
 } from "@/features/body-measurements/body-measurement-form";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import z from "zod";
 
 export default function EditBodyMeasurementPage() {
   const params = useParams();
+  const router = useRouter();
   const measurementId = Number(params.measurementId);
 
   const { data } = useBodyMeasurement(
     !isNaN(measurementId) ? measurementId : undefined,
   );
+  const editBodyMeasurementMutation = useEditBodyMeasurement(measurementId);
+  const deleteBodyMeasurementMutation = useDeleteBodyMeasurement(measurementId);
 
   const handleSubmit = (data: z.infer<typeof bodyMeasurementSchema>) => {
-    console.log(data);
+    editBodyMeasurementMutation.mutate(
+      {
+        measuredAt: data.date.toISOString(),
+        weight: data.weight,
+      },
+      {
+        onSuccess: () => {
+          router.push("/app/body-measurements");
+        },
+      },
+    );
+  };
+
+  const handleDelete = () => {
+    deleteBodyMeasurementMutation.mutate(undefined, {
+      onSuccess: () => {
+        router.push("/app/body-measurements");
+      },
+    });
   };
 
   if (!data) return null;
@@ -27,7 +52,7 @@ export default function EditBodyMeasurementPage() {
       <div className="px-4">
         <BodyMeasurementForm
           onSubmit={handleSubmit}
-          onDelete={() => console.log("delete")}
+          onDelete={handleDelete}
           measurementData={data}
         />
       </div>
