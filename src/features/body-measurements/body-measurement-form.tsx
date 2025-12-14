@@ -15,12 +15,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
+interface BodyMeasurementFormProps {
+  onSubmit: (data: z.infer<typeof bodyMeasurementSchema>) => void;
+}
+
 const bodyMeasurementSchema = z.object({
   date: z.date(),
   weight: z.string(),
 });
 
-export default function BodyMeasurementForm() {
+export default function BodyMeasurementForm({
+  onSubmit,
+}: BodyMeasurementFormProps) {
   const form = useForm<z.infer<typeof bodyMeasurementSchema>>({
     resolver: zodResolver(bodyMeasurementSchema),
     defaultValues: {
@@ -30,7 +36,7 @@ export default function BodyMeasurementForm() {
   });
 
   function handleSubmit(data: z.infer<typeof bodyMeasurementSchema>) {
-    console.log(data);
+    onSubmit(data);
   }
 
   return (
