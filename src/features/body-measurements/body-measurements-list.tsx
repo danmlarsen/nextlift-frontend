@@ -3,6 +3,7 @@
 import { formatDate } from "date-fns";
 
 import { useBodyMeasurements } from "@/api/body-measurements/queries";
+import Link from "next/link";
 
 export default function BodyMeasurementList() {
   const { data } = useBodyMeasurements();
@@ -12,13 +13,15 @@ export default function BodyMeasurementList() {
     data.length > 0 && (
       <ul className="space-y-4">
         {data.map((measurement) => (
-          <li
-            key={measurement.id}
-            className="bg-card grid grid-cols-[auto_1fr_auto] gap-4 rounded-lg p-4"
-          >
-            <div>{formatDate(measurement.measuredAt, "PP")}</div>
-            <div>{measurement.weight}</div>
-            <div>link</div>
+          <li key={measurement.id}>
+            <Link
+              href={`/app/body-measurements/edit/${measurement.id}`}
+              className="bg-card grid w-full grid-cols-[auto_1fr_auto] gap-4 rounded-lg p-4 text-left"
+            >
+              <div>{formatDate(measurement.measuredAt, "PP")}</div>
+              <div>{measurement.weight}</div>
+              <div>link</div>
+            </Link>
           </li>
         ))}
       </ul>
