@@ -19,15 +19,15 @@ interface BodyMeasurementFormProps {
   onSubmit: (data: z.infer<typeof bodyMeasurementSchema>) => void;
 }
 
-const bodyMeasurementSchema = z.object({
+export const bodyMeasurementSchema = z.object({
   date: z.date(),
-  weight: z.string(),
+  weight: z.coerce.number<string | number>().positive("Must be positive"),
 });
 
 export default function BodyMeasurementForm({
   onSubmit,
 }: BodyMeasurementFormProps) {
-  const form = useForm<z.infer<typeof bodyMeasurementSchema>>({
+  const form = useForm({
     resolver: zodResolver(bodyMeasurementSchema),
     defaultValues: {
       date: new Date(),
@@ -55,7 +55,7 @@ export default function BodyMeasurementForm({
                     onChange={field.onChange}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="col-start-2" />
               </FormItem>
             )}
           />
@@ -69,7 +69,7 @@ export default function BodyMeasurementForm({
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="col-start-2" />
               </FormItem>
             )}
           />

@@ -6,3 +6,8 @@ export type MeasurementData = {
   notes: string | null;
   imageUrl: string | null;
 };
+
+export type CreateMeasurementDto = {
+  measuredAt: string;
+  weight: number;
+};
