@@ -1,5 +1,6 @@
 "use client";
 
+import { MeasurementData } from "@/api/body-measurements/types";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import {
@@ -16,7 +17,9 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 interface BodyMeasurementFormProps {
+  measurementData?: MeasurementData;
   onSubmit: (data: z.infer<typeof bodyMeasurementSchema>) => void;
+  onDelete?: () => void;
 }
 
 export const bodyMeasurementSchema = z.object({
@@ -26,14 +29,20 @@ export const bodyMeasurementSchema = z.object({
 
 export default function BodyMeasurementForm({
   onSubmit,
+  onDelete,
+  measurementData,
 }: BodyMeasurementFormProps) {
   const form = useForm({
     resolver: zodResolver(bodyMeasurementSchema),
     defaultValues: {
-      date: new Date(),
-      weight: "",
+      date: measurementData?.measuredAt
+        ? new Date(measurementData.measuredAt)
+        : new Date(),
+      weight: measurementData?.weight || "",
     },
   });
+
+  console.log(measurementData);
 
   function handleSubmit(data: z.infer<typeof bodyMeasurementSchema>) {
     onSubmit(data);
@@ -74,9 +83,14 @@ export default function BodyMeasurementForm({
             )}
           />
 
-          <Button type="submit" className="mt-4 w-full">
-            OK
-          </Button>
+          <div className="grid grid-cols-2 gap-4">
+            {measurementData && (
+              <Button variant="destructive" onClick={onDelete}>
+                Delete
+              </Button>
+            )}
+            <Button type="submit">Save</Button>
+          </div>
         </fieldset>
       </form>
     </Form>
