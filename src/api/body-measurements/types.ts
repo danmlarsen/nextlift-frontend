@@ -11,3 +11,5 @@ export type CreateMeasurementDto = {
   measuredAt: string;
   weight: number;
 };
+
+export type UpdateMeasurementDto = CreateMeasurementDto;
