@@ -6,6 +6,7 @@ import {
 } from "@/api/body-measurements/mutations";
 import { useBodyMeasurement } from "@/api/body-measurements/queries";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import BodyMeasurementForm from "@/features/body-measurements/body-measurement-form";
 import { bodyMeasurementSchema } from "@/validation/bodyMeasurementSchema";
 import { useParams, useRouter } from "next/navigation";
@@ -16,7 +17,7 @@ export default function EditBodyMeasurementPage() {
   const router = useRouter();
   const measurementId = Number(params.measurementId);
 
-  const { data } = useBodyMeasurement(
+  const { data, isLoading, isSuccess, isError } = useBodyMeasurement(
     !isNaN(measurementId) ? measurementId : undefined,
   );
   const editBodyMeasurementMutation = useEditBodyMeasurement(measurementId);
@@ -44,16 +45,24 @@ export default function EditBodyMeasurementPage() {
     });
   };
 
-  if (!data) return null;
+  if (isLoading) return <Skeleton className="h-[200px] rounded-lg" />;
 
   return (
     <Card>
       <div className="px-4">
-        <BodyMeasurementForm
-          onSubmit={handleSubmit}
-          onDelete={handleDelete}
-          measurementData={data}
-        />
+        {isSuccess && !!data && (
+          <BodyMeasurementForm
+            onSubmit={handleSubmit}
+            onDelete={handleDelete}
+            measurementData={data}
+          />
+        )}
+        {isError && (
+          <p>
+            An unexpected error occurred while loading body measurements. Please
+            try again later.
+          </p>
+        )}
       </div>
     </Card>
   );
