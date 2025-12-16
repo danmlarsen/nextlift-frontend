@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -83,13 +84,18 @@ export default function BodyMeasurementForm({
             )}
           />
 
-          <div className="grid grid-cols-2 gap-4">
-            {measurementData && (
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            {!!measurementData && (
               <Button variant="destructive" onClick={onDelete}>
                 Delete
               </Button>
             )}
-            <Button type="submit">Save</Button>
+            <Button
+              type="submit"
+              className={cn("col-span-2", !!measurementData && "col-span-1")}
+            >
+              Save
+            </Button>
           </div>
         </fieldset>
       </form>
