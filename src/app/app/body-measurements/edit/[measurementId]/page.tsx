@@ -6,9 +6,8 @@ import {
 } from "@/api/body-measurements/mutations";
 import { useBodyMeasurement } from "@/api/body-measurements/queries";
 import { Card } from "@/components/ui/card";
-import BodyMeasurementForm, {
-  bodyMeasurementSchema,
-} from "@/features/body-measurements/body-measurement-form";
+import BodyMeasurementForm from "@/features/body-measurements/body-measurement-form";
+import { bodyMeasurementSchema } from "@/validation/bodyMeasurementSchema";
 import { useParams, useRouter } from "next/navigation";
 import z from "zod";
 

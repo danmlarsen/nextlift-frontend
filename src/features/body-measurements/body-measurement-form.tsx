@@ -1,5 +1,9 @@
 "use client";
 
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
 import { MeasurementData } from "@/api/body-measurements/types";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -13,20 +17,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import z from "zod";
+import { bodyMeasurementSchema } from "@/validation/bodyMeasurementSchema";
 
 interface BodyMeasurementFormProps {
   measurementData?: MeasurementData;
   onSubmit: (data: z.infer<typeof bodyMeasurementSchema>) => void;
   onDelete?: () => void;
 }
-
-export const bodyMeasurementSchema = z.object({
-  date: z.date(),
-  weight: z.coerce.number<string | number>().positive("Must be positive"),
-});
 
 export default function BodyMeasurementForm({
   onSubmit,

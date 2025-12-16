@@ -18,7 +18,7 @@ export default function BodyMeasurementsLayout({
         <Button variant="ghost" onClick={() => router.back()}>
           <ChevronLeftIcon />
         </Button>
-        <h1 className="text-xl font-bold">Body Measurements</h1>
+        <h1 className="text-xl font-bold">Bodyweight tracker</h1>
         <Button asChild>
           <Link href={`/app/body-measurements/add`}>Add</Link>
         </Button>
