@@ -48,7 +48,7 @@ export default function EditBodyMeasurementPage() {
   if (!data) return null;
 
   return (
-    <Card className="max-w-lg">
+    <Card>
       <div className="px-4">
         <BodyMeasurementForm
           onSubmit={handleSubmit}

@@ -28,7 +28,7 @@ export default function AddBodyMeasurementPage() {
   };
 
   return (
-    <Card className="max-w-lg">
+    <Card>
       <div className="px-4">
         <BodyMeasurementForm onSubmit={handleSubmit} />
       </div>
