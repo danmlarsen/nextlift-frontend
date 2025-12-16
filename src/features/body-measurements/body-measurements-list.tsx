@@ -1,32 +1,32 @@
 "use client";
 
-import { formatDate } from "date-fns";
-
 import { useBodyMeasurements } from "@/api/body-measurements/queries";
-import Link from "next/link";
-import { ChevronRightIcon } from "lucide-react";
-import { formatNumber } from "@/lib/utils";
+import BodyMeasurementsItem, {
+  BodyMeasurementsItemSkeleton,
+} from "./body-measurements-item";
 
 export default function BodyMeasurementList() {
-  const { data } = useBodyMeasurements();
+  const { data, isLoading, isSuccess, isError } = useBodyMeasurements();
 
   return (
-    !!data &&
-    data.length > 0 && (
-      <ul className="space-y-4">
-        {data.map((measurement) => (
-          <li key={measurement.id}>
-            <Link
-              href={`/app/body-measurements/edit/${measurement.id}`}
-              className="bg-card grid w-full grid-cols-[150px_1fr_auto] gap-4 rounded-lg p-6 text-left"
-            >
-              <div>{formatDate(measurement.measuredAt, "PP")}</div>
-              <div>{formatNumber(measurement.weight)} kg</div>
-              <ChevronRightIcon />
-            </Link>
-          </li>
+    <ul className="space-y-4">
+      {isLoading &&
+        Array.from({ length: 5 }).map((_, index) => (
+          <BodyMeasurementsItemSkeleton key={`initial-${index}`} />
         ))}
-      </ul>
-    )
+      {isSuccess &&
+        data.map((measurement) => (
+          <BodyMeasurementsItem
+            key={measurement.id}
+            measurement={measurement}
+          />
+        ))}
+      {isError && (
+        <li className="text-destructive">
+          An unexpected error occurred while loading body measurements. Please
+          try again later.
+        </li>
+      )}
+    </ul>
   );
 }
