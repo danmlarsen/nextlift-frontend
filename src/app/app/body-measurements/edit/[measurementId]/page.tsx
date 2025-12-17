@@ -40,7 +40,7 @@ export default function EditBodyMeasurementsPage() {
   const handleDelete = () => {
     deleteBodyMeasurementMutation.mutate(undefined, {
       onSuccess: () => {
-        router.push("/app/body-measurements");
+        router.replace("/app/body-measurements");
       },
     });
   };
