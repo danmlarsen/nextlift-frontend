@@ -25,7 +25,7 @@ interface BodyMeasurementFormProps {
   onDelete?: () => void;
 }
 
-export default function BodyMeasurementForm({
+export default function BodyMeasurementsForm({
   onSubmit,
   onDelete,
   measurementData,

@@ -7,12 +7,12 @@ import {
 import { useBodyMeasurement } from "@/api/body-measurements/queries";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import BodyMeasurementForm from "@/features/body-measurements/body-measurement-form";
+import BodyMeasurementForm from "@/features/body-measurements/body-measurements-form";
 import { bodyMeasurementSchema } from "@/validation/bodyMeasurementSchema";
 import { useParams, useRouter } from "next/navigation";
 import z from "zod";
 
-export default function EditBodyMeasurementPage() {
+export default function EditBodyMeasurementsPage() {
   const params = useParams();
   const router = useRouter();
   const measurementId = Number(params.measurementId);

@@ -14,7 +14,7 @@ export default function HomePage() {
         <div className="space-y-4 sm:col-start-2 sm:row-start-1">
           <NewActiveWorkoutButton />
           <Button className="w-full" asChild>
-            <Link href="/app/body-measurements">Bodyweight tracking</Link>
+            <Link href="/app/body-measurements">Bodyweight tracker</Link>
           </Button>
         </div>
         <div className="space-y-4 sm:col-start-1 sm:row-start-1">

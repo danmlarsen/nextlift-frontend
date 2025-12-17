@@ -5,7 +5,7 @@ import BodyMeasurementsItem, {
   BodyMeasurementsItemSkeleton,
 } from "./body-measurements-item";
 
-export default function BodyMeasurementList() {
+export default function BodyMeasurementsList() {
   const { data, isLoading, isSuccess, isError } = useBodyMeasurements();
 
   return (
