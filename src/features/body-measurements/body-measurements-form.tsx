@@ -83,7 +83,7 @@ export default function BodyMeasurementsForm({
 
           <div className="mt-6 grid grid-cols-2 gap-4">
             {!!measurementData && (
-              <Button variant="destructive" onClick={onDelete}>
+              <Button variant="destructive" type="button" onClick={onDelete}>
                 Delete
               </Button>
             )}
