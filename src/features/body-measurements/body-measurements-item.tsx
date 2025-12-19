@@ -1,4 +1,4 @@
-import { formatDate } from "date-fns";
+import { format } from "date-fns";
 import Link from "next/link";
 import { ChevronRightIcon } from "lucide-react";
 
@@ -17,11 +17,11 @@ export default function BodyMeasurementsItem({
     <li>
       <Link
         href={`/app/body-measurements/edit/${measurement.id}`}
-        className="bg-card grid w-full grid-cols-[150px_1fr_auto] gap-4 rounded-lg p-6 text-left"
+        className="bg-card hover:bg-card/50 grid w-full grid-cols-[150px_1fr_auto] gap-4 rounded-lg p-6 text-left transition-colors duration-300"
       >
-        <div>{formatDate(measurement.measuredAt, "PP")}</div>
+        <div>{format(new Date(measurement.measuredAt), "PP")}</div>
         <div>{formatNumber(measurement.weight)} kg</div>
-        <ChevronRightIcon />
+        <ChevronRightIcon aria-hidden="true" />
       </Link>
     </li>
   );
