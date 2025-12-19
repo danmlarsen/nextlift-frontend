@@ -11,7 +11,7 @@ import { type WorkoutData } from "@/api/workouts/types";
 import { type ExerciseData } from "@/api/exercises/types";
 import WorkoutNotes from "./workout-notes/workout-notes";
 import { parseWorkoutTitle } from "@/lib/utils";
-import DatePicker from "@/components/date-picker";
+import DatePicker from "@/components/workout-date-picker";
 import ExerciseDetailsModal from "@/features/exercises/components/exercise-details/exercise-details-modal";
 import { useSearchParamState } from "@/hooks/use-search-param-state";
 
