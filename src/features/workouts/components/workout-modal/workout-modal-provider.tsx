@@ -6,7 +6,7 @@ import { ResponsiveModal } from "@/components/ui/responsive-modal";
 import { useSearchParamState } from "@/hooks/use-search-param-state";
 import WorkoutForm from "./workout-modal-body";
 import { useWorkout } from "@/api/workouts/queries";
-import { cn, parseWorkoutTitle } from "@/lib/utils";
+import { cn, parseWorkoutTitle, summarizeWorkout } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import {
   useCompleteWorkout,
@@ -19,6 +19,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import WorkoutModalHeader from "./workout-modal-header";
 import { WorkoutData } from "@/api/workouts/types";
+import WorkoutHistoryItem from "../workout-history/workout-history-item";
+import { Button } from "@/components/ui/button";
 
 interface WorkoutModalProviderContextValue {
   workout?: WorkoutData;
@@ -43,6 +45,7 @@ export default function WorkoutModalProvider({
   const [isEditing, setIsEditing] = useState(true);
   const [completeWorkoutDialogOpen, setCompleteWorkoutDialogOpen] =
     useState(false);
+  const [showWorkoutSummary, setShowWorkoutSummary] = useState(false);
   const [deleteWorkoutOpen, setDeleteWorkoutOpen] = useState(false);
   const invalidateWorkout = useInvalidateWorkout();
   const {
@@ -73,6 +76,7 @@ export default function WorkoutModalProvider({
 
   const closeWorkout = () => {
     setIsOpen(false);
+    setShowWorkoutSummary(false);
     if (workoutId) {
       invalidateWorkout(workoutId);
     }
@@ -88,8 +92,9 @@ export default function WorkoutModalProvider({
 
     completeWorkout.mutate(workout.id, {
       onSuccess: () => {
-        closeWorkout();
+        // closeWorkout();
         queryClient.setQueryData(["activeWorkout"], null);
+        setShowWorkoutSummary(true);
       },
     });
   };
@@ -136,7 +141,7 @@ export default function WorkoutModalProvider({
                 Error loading workout
               </div>
             )}
-            {isSuccess && workout && (
+            {isSuccess && workout && !showWorkoutSummary && (
               <div
                 className={cn(
                   "grid h-[calc(100dvh-42px)] grid-rows-[auto_1fr] pb-4",
@@ -157,6 +162,15 @@ export default function WorkoutModalProvider({
                     isEditing={isEditing}
                   />
                 </div>
+              </div>
+            )}
+            {showWorkoutSummary && workout && (
+              <div className="space-y-4 px-4 text-center">
+                <p>Workout Completed!</p>
+                <Button className="w-full" onClick={closeWorkout}>
+                  Close
+                </Button>
+                <WorkoutHistoryItem workout={summarizeWorkout(workout)} />
               </div>
             )}
           </>

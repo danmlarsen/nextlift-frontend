@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 import {
+  WorkoutSummaryData,
   type WorkoutData,
   type WorkoutExerciseBestSet,
   type WorkoutSetData,
@@ -204,4 +205,63 @@ export function getYouTubeThumbnail(
   };
 
   return `https://img.youtube.com/vi/${videoId}/${qualityMap[quality]}.jpg`;
+}
+
+export function summarizeWorkout(workout: WorkoutData) {
+  const totalWeight = workout.workoutExercises.reduce(
+    (total, exercise) =>
+      total +
+      exercise.workoutSets.reduce(
+        (setTotal, curSet) =>
+          setTotal +
+          (curSet.completed ? (curSet.weight ?? 0) * (curSet.reps ?? 0) : 0),
+        0,
+      ),
+    0,
+  );
+
+  const totalCompletedSets = workout.workoutExercises.reduce(
+    (total, exercise) =>
+      total + exercise.workoutSets?.filter((set) => !!set.completed)?.length,
+    0,
+  );
+
+  const compressedWorkoutExercises = workout.workoutExercises.map(
+    (workoutExercise) => {
+      const completedSets = workoutExercise.workoutSets.reduce(
+        (sum, set) => (set.completed ? sum + 1 : sum),
+        0,
+      );
+
+      let bestSet: Partial<WorkoutSetData | null> = null;
+      if (workoutExercise.exercise.category === "strength") {
+        bestSet = workoutExercise.workoutSets.reduce((best, current) => {
+          const currentOneRM = calculateOneRepMax(
+            current.weight!,
+            current.reps!,
+          );
+          const bestOneRM = calculateOneRepMax(best.weight!, best.reps!);
+          return currentOneRM > bestOneRM ? current : best;
+        });
+      }
+      if (workoutExercise.exercise.category === "cardio") {
+        bestSet = workoutExercise.workoutSets.reduce((best, current) =>
+          current.duration! > best.duration! ? current : best,
+        );
+      }
+
+      return {
+        exerciseName: workoutExercise.exercise.name,
+        sets: completedSets,
+        bestSet,
+      };
+    },
+  );
+
+  return {
+    ...workout,
+    totalWeight,
+    totalCompletedSets,
+    workoutExercises: compressedWorkoutExercises.filter((we) => we.sets > 0),
+  } as WorkoutSummaryData;
 }
