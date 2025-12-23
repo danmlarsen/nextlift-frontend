@@ -76,7 +76,6 @@ export default function WorkoutModalProvider({
 
   const closeWorkout = () => {
     setIsOpen(false);
-    setShowWorkoutSummary(false);
     if (workoutId) {
       invalidateWorkout(workoutId);
     }
@@ -92,9 +91,9 @@ export default function WorkoutModalProvider({
 
     completeWorkout.mutate(workout.id, {
       onSuccess: () => {
-        // closeWorkout();
-        queryClient.setQueryData(["activeWorkout"], null);
         setShowWorkoutSummary(true);
+        closeWorkout();
+        queryClient.setQueryData(["activeWorkout"], null);
       },
     });
   };
@@ -164,19 +163,38 @@ export default function WorkoutModalProvider({
                 </div>
               </div>
             )}
-            {showWorkoutSummary && workout && (
-              <div className="space-y-4 px-4 text-center">
-                <p>Workout Completed!</p>
-                <Button className="w-full" onClick={closeWorkout}>
-                  Close
-                </Button>
-                <WorkoutHistoryItem workout={summarizeWorkout(workout)} />
-              </div>
-            )}
           </>
         }
         title={workoutTitle}
         description={`Viewing workout ${workoutTitle}`}
+      />
+
+      <ResponsiveModal
+        isOpen={showWorkoutSummary && !!workout}
+        onOpenChange={setShowWorkoutSummary}
+        content={
+          workout && (
+            <div className="grid grid-rows-[auto_1fr_auto] space-y-4 p-4 text-center">
+              <div>
+                <p>Workout Completed!</p>
+              </div>
+              <div>
+                <WorkoutHistoryItem
+                  workout={summarizeWorkout(workout)}
+                  interactable={false}
+                />
+              </div>
+              <div>
+                <Button
+                  className="w-full"
+                  onClick={() => setShowWorkoutSummary(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )
+        }
       />
 
       <CompleteWorkoutDialog

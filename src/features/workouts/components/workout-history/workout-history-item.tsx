@@ -18,17 +18,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import WorkoutHistoryItemDropdownMenu from "./workout-history-item-dropdown-menu";
-import { formatBestSet, formatTime, parseWorkoutTitle } from "@/lib/utils";
+import { cn, formatBestSet, formatTime, parseWorkoutTitle } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useWorkoutModal } from "../workout-modal/workout-modal-provider";
 import { Button } from "@/components/ui/button";
 
 interface WorkoutHistoryItemProps {
   workout: WorkoutSummaryData;
+  interactable?: boolean;
 }
 
 export default function WorkoutHistoryItem({
   workout,
+  interactable = true,
 }: WorkoutHistoryItemProps) {
   const {
     id,
@@ -44,21 +46,27 @@ export default function WorkoutHistoryItem({
 
   return (
     <>
-      <Card>
+      <Card className="text-left">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="sr-only">{workoutTitle}</CardTitle>
-            <Button
-              onClick={() => openWorkout(id, false)}
-              variant="link"
-              className="px-0 font-bold lg:text-xl"
-            >
+            <CardTitle className={cn("", interactable && "sr-only")}>
               {workoutTitle}
-            </Button>
-            <WorkoutHistoryItemDropdownMenu
-              workoutId={id}
-              onClickEdit={() => openWorkout(id)}
-            />
+            </CardTitle>
+            {interactable && (
+              <>
+                <Button
+                  onClick={() => openWorkout(id, false)}
+                  variant="link"
+                  className="px-0 font-bold lg:text-xl"
+                >
+                  {workoutTitle}
+                </Button>
+                <WorkoutHistoryItemDropdownMenu
+                  workoutId={id}
+                  onClickEdit={() => openWorkout(id)}
+                />
+              </>
+            )}
           </div>
           <CardDescription>{formatDate(startedAt, "EEEE PP")}</CardDescription>
         </CardHeader>
