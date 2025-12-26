@@ -15,10 +15,11 @@ export default function BodyMeasurementsList() {
           <BodyMeasurementsItemSkeleton key={`initial-${index}`} />
         ))}
       {isSuccess &&
-        data.map((measurement) => (
+        data.map((measurement, idx) => (
           <BodyMeasurementsItem
             key={measurement.id}
             measurement={measurement}
+            previousMeasurement={data.at(idx + 1) || undefined}
           />
         ))}
       {isError && (
