@@ -68,7 +68,7 @@ export default function ExercisesList({
         hasMore={hasNextPage}
         useWindow={!onExerciseClick} // Set to false if used in a drawer/modal
       >
-        <ul>
+        <ul className="space-y-2 py-2">
           {isLoading &&
             Array.from({ length: EXERCISE_LIST_ITEM_AMOUNT }).map(
               (_, index) => <ExerciseItemSkeleton key={`initial-${index}`} />,

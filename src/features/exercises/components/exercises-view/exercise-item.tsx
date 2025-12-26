@@ -17,32 +17,29 @@ export default function ExerciseItem({
   ];
 
   return (
-    <li>
+    <li className="odd:bg-card even:bg-card/50 rounded-sm p-2">
       <button
-        className="grid w-full grid-cols-[50px_1fr_50px] items-center gap-4 py-4"
+        className="grid w-full grid-cols-[50px_1fr_50px] items-center gap-3 text-sm"
         onClick={() => onExerciseClick(exercise.id)}
       >
         <div>
           <ExerciseAvatar name={exercise.name} />
         </div>
         <div className="text-left">
-          <h2 className="text-lg font-bold">{exercise.name}</h2>
-          <p className="text-muted-foreground text-sm capitalize">
+          <h2 className="font-bold">{exercise.name}</h2>
+          <p className="text-muted-foreground text-xs capitalize">
             {exercise.equipment}
           </p>
-          <div>
+          <div className="text-muted-foreground text-[0.6rem] capitalize">
             {muscleGroups.map((muscleGroup, idx) => (
-              <span
-                key={`${muscleGroup}_${idx}`}
-                className="text-muted-foreground text-xs capitalize"
-              >
+              <span key={`${muscleGroup}_${idx}`}>
                 {muscleGroup}
                 {idx + 1 !== muscleGroups.length ? ", " : " "}
               </span>
             ))}
           </div>
         </div>
-        <div>{exercise.timesUsed} times</div>
+        <div className="text-xs">{exercise.timesUsed} times</div>
       </button>
     </li>
   );
