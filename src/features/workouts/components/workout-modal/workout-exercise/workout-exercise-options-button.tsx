@@ -12,12 +12,12 @@ import {
 
 interface WorkoutExerciseOptionsButtonProps {
   onOpenNotes: () => void;
-  onConfirmDelete: () => void;
+  onDelete: () => void;
 }
 
 export default function WorkoutExerciseOptionsButton({
   onOpenNotes,
-  onConfirmDelete,
+  onDelete,
 }: WorkoutExerciseOptionsButtonProps) {
   return (
     <DropdownMenu>
@@ -33,7 +33,7 @@ export default function WorkoutExerciseOptionsButton({
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Button onClick={onConfirmDelete} variant="ghost">
+          <Button onClick={onDelete} variant="ghost">
             Remove Exercise
           </Button>
         </DropdownMenuItem>

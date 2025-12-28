@@ -101,7 +101,7 @@ export default function WorkoutExercise({
           {isEditing && (
             <WorkoutExerciseOptionsButton
               onOpenNotes={() => setNotesOpen(true)}
-              onConfirmDelete={() => setDeleteExerciseOpen(true)}
+              onDelete={() => setDeleteExerciseOpen(true)}
             />
           )}
         </div>
