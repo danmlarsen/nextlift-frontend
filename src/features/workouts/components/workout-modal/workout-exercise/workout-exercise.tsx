@@ -27,6 +27,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAddWorkoutSet } from "@/api/workouts/workout-set-mutations";
 import { useWorkoutModal } from "../workout-modal-provider";
 import { useHaptics } from "@/hooks/use-haptics";
+import ConfirmDialog from "@/components/ui/confirm-dialog";
 
 interface WorkoutExerciseProps {
   exerciseNum: number;
@@ -40,6 +41,7 @@ export default function WorkoutExercise({
   onOpenExercise,
 }: WorkoutExerciseProps) {
   const [notesOpen, setNotesOpen] = useState(false);
+  const [deleteExerciseOpen, setDeleteExerciseOpen] = useState(false);
   const { isEditing } = useWorkoutModal();
   const addWorkoutSet = useAddWorkoutSet();
   const updateWorkoutExercise = useUpdateWorkoutExercise();
@@ -81,27 +83,89 @@ export default function WorkoutExercise({
   };
 
   return (
-    <li
-      className={`space-y-4 ${deleteWorkoutExercise.isPending ? "pointer-events-none animate-pulse" : ""}`}
-    >
-      <div className="flex items-center justify-between">
-        <Button
-          onClick={() => onOpenExercise(workoutExercise.exercise)}
-          variant="ghost"
-        >
-          <h2 className="text-lg font-semibold">
-            <span>{exerciseNum}. </span>
-            {workoutExercise.exercise.name}
-          </h2>
-          <ChevronRightIcon />
-        </Button>
+    <>
+      <li
+        className={`space-y-4 ${deleteWorkoutExercise.isPending ? "pointer-events-none animate-pulse" : ""}`}
+      >
+        <div className="flex items-center justify-between">
+          <Button
+            onClick={() => onOpenExercise(workoutExercise.exercise)}
+            variant="ghost"
+          >
+            <h2 className="text-lg font-semibold">
+              <span>{exerciseNum}. </span>
+              {workoutExercise.exercise.name}
+            </h2>
+            <ChevronRightIcon />
+          </Button>
+          {isEditing && (
+            <WorkoutExerciseOptionsButton
+              onOpenNotes={() => setNotesOpen(true)}
+              onConfirmDelete={() => setDeleteExerciseOpen(true)}
+            />
+          )}
+        </div>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-10 text-center">Set</TableHead>
+              <TableHead className="text-center">Previous</TableHead>
+              {workoutExercise.exercise.category === "strength" && (
+                <>
+                  <TableHead className="w-20 text-center">kg</TableHead>
+                  <TableHead className="w-20 text-center">Reps</TableHead>
+                </>
+              )}
+              {workoutExercise.exercise.category === "cardio" && (
+                <>
+                  <TableHead />
+                  <TableHead className="w-20 text-center">Minutes</TableHead>
+                </>
+              )}
+              <TableHead className="w-10" />
+            </TableRow>
+          </TableHeader>
+          <TableBody className="text-center">
+            {workoutSets.map((workoutSet, index) => {
+              const placeholderSet = getPlaceholderWorkoutSet(
+                index,
+                previousWorkoutSets,
+                workoutSets,
+              );
+              const previousSet = previousWorkoutSets?.[index];
+
+              return (
+                <WorkoutSet
+                  key={workoutSet.id}
+                  workoutSet={workoutSet}
+                  exerciseCategory={workoutExercise.exercise.category}
+                  previousSet={previousSet}
+                  placeholderSet={placeholderSet}
+                />
+              );
+            })}
+            {pendingAddSetCount > 0 &&
+              Array.from({ length: pendingAddSetCount }, (_, i) => (
+                <TableRow key={`pending-set-${i}`}>
+                  <TableCell colSpan={5} className="h-13">
+                    <Skeleton className="h-10" />
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+
         {isEditing && (
-          <WorkoutExerciseOptionsButton
-            onOpenNotes={() => setNotesOpen(true)}
-            onConfirmDelete={handleDeleteWorkoutExercise}
-          />
+          <Button
+            onClick={handleAddWorkoutSet}
+            className="w-full"
+            variant="outline"
+          >
+            + Add set
+          </Button>
         )}
-      </div>
+      </li>
 
       <WorkoutNotes
         notes={workoutExercise.notes}
@@ -118,65 +182,13 @@ export default function WorkoutExercise({
         }
       />
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-10 text-center">Set</TableHead>
-            <TableHead className="text-center">Previous</TableHead>
-            {workoutExercise.exercise.category === "strength" && (
-              <>
-                <TableHead className="w-20 text-center">kg</TableHead>
-                <TableHead className="w-20 text-center">Reps</TableHead>
-              </>
-            )}
-            {workoutExercise.exercise.category === "cardio" && (
-              <>
-                <TableHead />
-                <TableHead className="w-20 text-center">Minutes</TableHead>
-              </>
-            )}
-            <TableHead className="w-10" />
-          </TableRow>
-        </TableHeader>
-        <TableBody className="text-center">
-          {workoutSets.map((workoutSet, index) => {
-            const placeholderSet = getPlaceholderWorkoutSet(
-              index,
-              previousWorkoutSets,
-              workoutSets,
-            );
-            const previousSet = previousWorkoutSets?.[index];
-
-            return (
-              <WorkoutSet
-                key={workoutSet.id}
-                workoutSet={workoutSet}
-                exerciseCategory={workoutExercise.exercise.category}
-                previousSet={previousSet}
-                placeholderSet={placeholderSet}
-              />
-            );
-          })}
-          {pendingAddSetCount > 0 &&
-            Array.from({ length: pendingAddSetCount }, (_, i) => (
-              <TableRow key={`pending-set-${i}`}>
-                <TableCell colSpan={5} className="h-13">
-                  <Skeleton className="h-10" />
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-
-      {isEditing && (
-        <Button
-          onClick={handleAddWorkoutSet}
-          className="w-full"
-          variant="outline"
-        >
-          + Add set
-        </Button>
-      )}
-    </li>
+      <ConfirmDialog
+        isOpen={deleteExerciseOpen}
+        onOpenChange={setDeleteExerciseOpen}
+        onConfirm={handleDeleteWorkoutExercise}
+        title="Remove Exercise"
+        variant="destructive"
+      />
+    </>
   );
 }
