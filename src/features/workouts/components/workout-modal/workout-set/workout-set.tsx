@@ -7,12 +7,12 @@ import { useMutationState } from "@tanstack/react-query";
 import { useUpdateWorkoutSet } from "@/api/workouts/workout-set-mutations";
 import { type WorkoutSetDto, type WorkoutSetData } from "@/api/workouts/types";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import WorkoutSetOptionsButton from "./workout-set-options-button";
 import { useWorkoutModal } from "../workout-modal-provider";
 import { useHaptics } from "@/hooks/use-haptics";
+import WorkoutSetInput from "./workout-set-input";
 
 interface WorkoutSetProps {
   workoutSet: WorkoutSetData;
@@ -213,6 +213,7 @@ export default function WorkoutSet({
   return (
     <TableRow
       className={cn(
+        "",
         isChecked && "bg-secondary/5 hover:bg-secondary/10",
         isPendingDelete && "animate-pulse",
       )}
@@ -225,8 +226,7 @@ export default function WorkoutSet({
       </TableCell>
       <TableCell>
         {exerciseCategory === "strength" && (
-          <Input
-            type="number"
+          <WorkoutSetInput
             placeholder={
               placeholderSet?.weight ? placeholderSet.weight.toString() : ""
             }
@@ -234,14 +234,12 @@ export default function WorkoutSet({
             onChange={(e) => handleWeightChange(e.target.value)}
             onBlur={handleWeightBlur}
             disabled={isChecked || isPendingDelete}
-            className="h-9 text-center"
           />
         )}
       </TableCell>
       <TableCell>
         {exerciseCategory === "strength" && (
-          <Input
-            type="number"
+          <WorkoutSetInput
             placeholder={
               placeholderSet?.reps ? placeholderSet.reps.toString() : ""
             }
@@ -249,12 +247,10 @@ export default function WorkoutSet({
             onChange={(e) => handleRepsChange(e.target.value)}
             onBlur={handleRepsBlur}
             disabled={isChecked || isPendingDelete}
-            className="h-9 text-center"
           />
         )}
         {exerciseCategory === "cardio" && (
-          <Input
-            type="number"
+          <WorkoutSetInput
             placeholder={
               placeholderSet?.duration ? placeholderSet.duration.toString() : ""
             }
@@ -262,13 +258,12 @@ export default function WorkoutSet({
             onChange={(e) => handleDurationChange(e.target.value)}
             onBlur={handleDurationBlur}
             disabled={isChecked || isPendingDelete}
-            className="h-9 text-center"
           />
         )}
       </TableCell>
       <TableCell>
         <Checkbox
-          className="size-8 rounded-full"
+          className="size-7 rounded-full"
           checked={isChecked}
           onCheckedChange={(checked) => handleCheckedChange(!!checked)}
           disabled={!isEditing || isPendingDelete}
