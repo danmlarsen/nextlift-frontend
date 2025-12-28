@@ -32,7 +32,7 @@ export default function WorkoutSetOptionsButton({
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="size-9 px-0 py-0"
+          className="size-8 px-0 py-0 text-xs"
           disabled={!isEditing}
         >
           {workoutSet.type === "normal" && workoutSet.setNumber}

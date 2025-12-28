@@ -218,13 +218,13 @@ export default function WorkoutSet({
         isPendingDelete && "animate-pulse",
       )}
     >
-      <TableCell>
+      <TableCell className="py-1">
         <WorkoutSetOptionsButton workoutSet={workoutSet} />
       </TableCell>
       <TableCell className="text-muted-foreground">
         {previousSetString}
       </TableCell>
-      <TableCell>
+      <TableCell className="py-1">
         {exerciseCategory === "strength" && (
           <WorkoutSetInput
             placeholder={
@@ -237,7 +237,7 @@ export default function WorkoutSet({
           />
         )}
       </TableCell>
-      <TableCell>
+      <TableCell className="py-1">
         {exerciseCategory === "strength" && (
           <WorkoutSetInput
             placeholder={
@@ -261,7 +261,7 @@ export default function WorkoutSet({
           />
         )}
       </TableCell>
-      <TableCell>
+      <TableCell className="py-1">
         <Checkbox
           className="size-7 rounded-full"
           checked={isChecked}
