@@ -85,19 +85,19 @@ export default function WorkoutExercise({
   return (
     <>
       <li
-        className={`space-y-4 ${deleteWorkoutExercise.isPending ? "pointer-events-none animate-pulse" : ""}`}
+        className={`space-y-2.5 ${deleteWorkoutExercise.isPending ? "pointer-events-none animate-pulse" : ""}`}
       >
         <div className="flex items-center justify-between">
-          <Button
+          <button
             onClick={() => onOpenExercise(workoutExercise.exercise)}
-            variant="ghost"
+            className="flex items-center gap-2"
           >
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-base font-semibold">
               <span>{exerciseNum}. </span>
               {workoutExercise.exercise.name}
             </h2>
-            <ChevronRightIcon />
-          </Button>
+            <ChevronRightIcon className="size-4" />
+          </button>
           {isEditing && (
             <WorkoutExerciseOptionsButton
               onOpenNotes={() => setNotesOpen(true)}
