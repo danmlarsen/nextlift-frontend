@@ -64,14 +64,24 @@ export default function WorkoutNotes({
 
       {notes && (
         <div>
-          <p className="break-words whitespace-pre-wrap">{notes}</p>
+          <p className="px-2 text-sm break-words whitespace-pre-wrap">
+            {notes}
+          </p>
           {isEditing && (
             <div className="flex items-center gap-2">
-              <Button onClick={() => onNotesOpenChange(true)} variant="ghost">
+              <Button
+                onClick={() => onNotesOpenChange(true)}
+                variant="ghost"
+                className="text-xs"
+              >
                 <PencilIcon />
                 Edit
               </Button>
-              <Button onClick={() => setDeleteDialogOpen(true)} variant="ghost">
+              <Button
+                onClick={() => setDeleteDialogOpen(true)}
+                variant="ghost"
+                className="text-xs"
+              >
                 <TrashIcon />
                 Delete
               </Button>
