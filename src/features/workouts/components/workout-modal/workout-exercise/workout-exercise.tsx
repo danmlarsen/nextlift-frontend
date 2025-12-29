@@ -106,6 +106,21 @@ export default function WorkoutExercise({
           )}
         </div>
 
+        <WorkoutNotes
+          notes={workoutExercise.notes}
+          notesOpen={notesOpen}
+          onNotesOpenChange={setNotesOpen}
+          onUpdate={(notes) =>
+            updateWorkoutExercise.mutate({
+              workoutId: workoutExercise.workoutId,
+              workoutExerciseId: workoutExercise.id,
+              data: {
+                notes,
+              },
+            })
+          }
+        />
+
         <Table>
           <TableHeader>
             <TableRow>
@@ -166,21 +181,6 @@ export default function WorkoutExercise({
           </Button>
         )}
       </li>
-
-      <WorkoutNotes
-        notes={workoutExercise.notes}
-        notesOpen={notesOpen}
-        onNotesOpenChange={setNotesOpen}
-        onUpdate={(notes) =>
-          updateWorkoutExercise.mutate({
-            workoutId: workoutExercise.workoutId,
-            workoutExerciseId: workoutExercise.id,
-            data: {
-              notes,
-            },
-          })
-        }
-      />
 
       <ConfirmDialog
         isOpen={deleteExerciseOpen}
