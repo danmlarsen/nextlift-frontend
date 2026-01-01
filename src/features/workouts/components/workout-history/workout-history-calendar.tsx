@@ -2,7 +2,7 @@
 
 import { useWorkoutCalendar } from "@/api/workouts/queries";
 import { Calendar } from "@/components/ui/workout-calendar";
-import { endOfMonth, startOfMonth, subMonths } from "date-fns";
+import { addWeeks, endOfYear, startOfYear, subWeeks } from "date-fns";
 
 interface WorkoutHistoryCalendarProps {
   selectedDate: Date | undefined;
@@ -14,8 +14,8 @@ export default function WorkoutHistoryCalendar({
   setSelectedDate,
 }: WorkoutHistoryCalendarProps) {
   const currentDate = selectedDate || new Date();
-  const from = startOfMonth(subMonths(currentDate, 1));
-  const to = endOfMonth(currentDate);
+  const from = subWeeks(startOfYear(currentDate), 1);
+  const to = addWeeks(endOfYear(currentDate), 1);
   const { data: calendarData } = useWorkoutCalendar(from, to);
   const workoutDates = calendarData
     ? calendarData.workoutDates.map((str) => new Date(str))

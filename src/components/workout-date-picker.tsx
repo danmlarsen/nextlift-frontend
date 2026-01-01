@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { ChevronDownIcon } from "lucide-react";
+import { addWeeks, endOfYear, startOfYear, subWeeks } from "date-fns";
 
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/workout-calendar";
 import { useWorkoutCalendar } from "@/api/workouts/queries";
-import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 
 interface DatePickerProps {
   date: Date;
@@ -17,8 +17,8 @@ interface DatePickerProps {
 export default function DatePicker({ date, onDateChanged }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const currentDate = date || new Date();
-  const from = startOfMonth(subMonths(currentDate, 1));
-  const to = endOfMonth(currentDate);
+  const from = subWeeks(startOfYear(currentDate), 1);
+  const to = addWeeks(endOfYear(currentDate), 1);
   const { data: calendarData } = useWorkoutCalendar(from, to);
   const workoutDates = calendarData
     ? calendarData.workoutDates.map((str) => new Date(str))
