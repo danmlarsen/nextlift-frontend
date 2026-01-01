@@ -78,13 +78,17 @@ export function useWorkoutWeeklyStats(from: Date, to: Date) {
   });
 }
 
-export function useWorkoutCalendar(year: number) {
+export function useWorkoutCalendar(from: Date, to: Date) {
   const { apiClient } = useApiClient();
 
+  const searchParams = new URLSearchParams();
+  searchParams.set("from", from.toISOString());
+  searchParams.set("to", to.toISOString());
+  const queryString = searchParams.toString();
+
   return useQuery<WorkoutCalendarData>({
-    queryKey: ["workouts", "workoutDates", year],
+    queryKey: ["workouts", "workoutDates", { from, to }],
     queryFn: () =>
-      apiClient<WorkoutCalendarData>(`/workouts/calendar?year=${year}`),
-    staleTime: 60 * 60 * 1000,
+      apiClient<WorkoutCalendarData>(`/workouts/calendar?${queryString}`),
   });
 }
