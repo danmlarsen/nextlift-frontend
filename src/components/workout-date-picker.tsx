@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/workout-calendar";
 import { useWorkoutCalendar } from "@/api/workouts/queries";
+import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 
 interface DatePickerProps {
   date: Date;
@@ -16,7 +17,9 @@ interface DatePickerProps {
 export default function DatePicker({ date, onDateChanged }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const currentDate = date || new Date();
-  const { data: calendarData } = useWorkoutCalendar(currentDate.getFullYear());
+  const from = startOfMonth(subMonths(currentDate, 1));
+  const to = endOfMonth(currentDate);
+  const { data: calendarData } = useWorkoutCalendar(from, to);
   const workoutDates = calendarData
     ? calendarData.workoutDates.map((str) => new Date(str))
     : [];
