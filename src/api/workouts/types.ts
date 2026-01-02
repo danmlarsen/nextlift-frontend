@@ -106,6 +106,11 @@ export type UpdateWorkoutExerciseDto = {
   notes?: string;
 };
 
+export type WorkoutGraphData = {
+  startedAt: string;
+  totalVolume: number;
+};
+
 export type WorkoutStatus = "DRAFT" | "ACTIVE" | "COMPLETED";
 
 export const WORKOUT_SET_TYPES = [
