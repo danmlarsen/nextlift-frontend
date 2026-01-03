@@ -3,6 +3,7 @@ import WeeklyReportStats from "./weekly-report-stats";
 import NewActiveWorkoutButton from "../../../features/workouts/components/new-active-workout-button";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import WorkoutSummary from "./workout-summary";
 
 export default function HomePage() {
   return (
@@ -20,6 +21,9 @@ export default function HomePage() {
         <div className="space-y-4 sm:col-start-1 sm:row-start-1">
           <LifetimeWorkoutsStats />
           <WeeklyReportStats />
+        </div>
+        <div>
+          <WorkoutSummary />
         </div>
       </div>
     </div>
