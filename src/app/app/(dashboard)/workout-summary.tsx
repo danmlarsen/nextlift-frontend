@@ -11,31 +11,32 @@ export default function WorkoutSummary() {
   const to = endOfMonth(now);
   const { data } = useWorkoutGraphData(from, to);
 
-  const monthlyVolume = useMemo(() => {
+  const monthlyData = useMemo(() => {
     if (!data) return [];
 
-    const volumeByMonth = data.reduce((acc, workout) => {
+    const dataByMonth = data.reduce((acc, workout) => {
       const date = new Date(workout.startedAt);
       const monthKey = format(date, "yyyy-MM");
       const monthName = format(date, "MMMM yyyy");
 
       if (!acc.has(monthKey)) {
-        acc.set(monthKey, { month: monthName, totalVolume: 0 });
+        acc.set(monthKey, { month: monthName, workouts: 1, totalVolume: 0 });
       }
 
       acc.get(monthKey)!.totalVolume += workout.totalVolume;
+      acc.get(monthKey)!.workouts++;
       return acc;
-    }, new Map<string, { month: string; totalVolume: number }>());
+    }, new Map<string, { month: string; workouts: number; totalVolume: number }>());
 
     // Convert to array and sort chronologically
-    return Array.from(volumeByMonth.values()).sort((a, b) => {
+    return Array.from(dataByMonth.values()).sort((a, b) => {
       const dateA = new Date(a.month);
       const dateB = new Date(b.month);
       return dateA.getTime() - dateB.getTime();
     });
   }, [data]);
 
-  console.log(monthlyVolume);
+  console.log(monthlyData);
 
   return <div>workout summary</div>;
 }
