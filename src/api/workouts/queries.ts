@@ -1,4 +1,9 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useApiClient } from "../client";
 import {
   type WorkoutCalendarData,
@@ -7,6 +12,14 @@ import {
   type WorkoutsResponse,
 } from "./types";
 import { getDayRangeUTC } from "@/lib/utils";
+import {
+  addMonths,
+  addWeeks,
+  endOfMonth,
+  startOfMonth,
+  subMonths,
+  subWeeks,
+} from "date-fns";
 
 export function useCompletedWorkouts(selectedDate?: Date) {
   const { apiClient } = useApiClient();
@@ -91,4 +104,32 @@ export function useWorkoutCalendar(from: Date, to: Date) {
     queryFn: () =>
       apiClient<WorkoutCalendarData>(`/workouts/calendar?${queryString}`),
   });
+}
+
+export function usePrefetchAdjacentMonths(currentDate: Date) {
+  const { apiClient } = useApiClient();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const prefetchMonth = async (monthDate: Date) => {
+      const from = subWeeks(startOfMonth(monthDate), 1);
+      const to = addWeeks(endOfMonth(monthDate), 1);
+
+      const searchParams = new URLSearchParams();
+      searchParams.set("from", from.toISOString());
+      searchParams.set("to", to.toISOString());
+
+      await queryClient.prefetchQuery({
+        queryKey: ["workouts", "workoutDates", { from, to }],
+        queryFn: () =>
+          apiClient<WorkoutCalendarData>(
+            `/workouts/calendar?${searchParams.toString()}`,
+          ),
+        staleTime: 5 * 60 * 1000, // 5 minutes
+      });
+    };
+
+    prefetchMonth(subMonths(currentDate, 1));
+    prefetchMonth(addMonths(currentDate, 1));
+  }, [currentDate, queryClient, apiClient]);
 }

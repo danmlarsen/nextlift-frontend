@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import { ChevronDownIcon } from "lucide-react";
-import { addWeeks, endOfYear, startOfYear, subWeeks } from "date-fns";
+import { addWeeks, endOfMonth, startOfMonth, subWeeks } from "date-fns";
 
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/workout-calendar";
-import { useWorkoutCalendar } from "@/api/workouts/queries";
+import {
+  usePrefetchAdjacentMonths,
+  useWorkoutCalendar,
+} from "@/api/workouts/queries";
 
 interface DatePickerProps {
   date: Date;
@@ -16,10 +19,13 @@ interface DatePickerProps {
 
 export default function DatePicker({ date, onDateChanged }: DatePickerProps) {
   const [open, setOpen] = useState(false);
-  const currentDate = date || new Date();
-  const from = subWeeks(startOfYear(currentDate), 1);
-  const to = addWeeks(endOfYear(currentDate), 1);
+  const [currentDate, setCurrentDate] = useState(date || new Date());
+  const from = subWeeks(startOfMonth(currentDate), 1);
+  const to = addWeeks(endOfMonth(currentDate), 1);
+
   const { data: calendarData } = useWorkoutCalendar(from, to);
+  usePrefetchAdjacentMonths(currentDate);
+
   const workoutDates = calendarData
     ? calendarData.workoutDates.map((str) => new Date(str))
     : [];
@@ -52,6 +58,8 @@ export default function DatePicker({ date, onDateChanged }: DatePickerProps) {
           modifiers={{
             workout: workoutDates,
           }}
+          onPrevClick={(date) => setCurrentDate(date)}
+          onNextClick={(date) => setCurrentDate(date)}
         />
       </PopoverContent>
     </Popover>
