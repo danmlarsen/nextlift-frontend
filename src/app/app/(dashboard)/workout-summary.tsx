@@ -69,7 +69,7 @@ export default function WorkoutSummary() {
             />
             <Area
               dataKey="totalVolume"
-              type="linear"
+              type="monotone"
               fill="red"
               fillOpacity={0.4}
               stroke="red)"
