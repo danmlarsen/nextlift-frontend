@@ -14,6 +14,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { formatCompactNumber } from "@/lib/utils";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 export default function WorkoutSummary() {
@@ -33,14 +34,14 @@ export default function WorkoutSummary() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Line Chart - Linear</CardTitle>
-        <CardDescription>January - June 2025</CardDescription>
+        <CardTitle>Total Training Volume</CardTitle>
+        <CardDescription>kg</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <AreaChart
             accessibilityLayer
-            data={data?.daily}
+            data={data?.weekly}
             margin={{
               left: 12,
               right: 12,
@@ -52,14 +53,15 @@ export default function WorkoutSummary() {
               tickLine={true}
               axisLine={true}
               tickMargin={8}
-              tickFormatter={(value) => value}
+              tickFormatter={(value) => value.slice(-2)}
             />
             <YAxis
               dataKey="totalVolume"
               tickLine={true}
               axisLine={true}
               tickMargin={8}
-              tickFormatter={(value) => value}
+              tickCount={8}
+              tickFormatter={(value) => formatCompactNumber(value)}
             />
             <ChartTooltip
               cursor={false}
