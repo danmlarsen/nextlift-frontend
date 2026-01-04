@@ -106,9 +106,16 @@ export type UpdateWorkoutExerciseDto = {
   notes?: string;
 };
 
-export type WorkoutGraphData = {
-  startedAt: string;
+export type WorkoutChartPeriodData = {
+  period: string;
+  workouts: number;
   totalVolume: number;
+};
+
+export type WorkoutChartData = {
+  monthly: WorkoutChartPeriodData[];
+  weekly: WorkoutChartPeriodData[];
+  daily: WorkoutChartPeriodData[];
 };
 
 export type WorkoutStatus = "DRAFT" | "ACTIVE" | "COMPLETED";

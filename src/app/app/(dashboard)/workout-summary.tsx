@@ -1,42 +1,81 @@
 "use client";
 
-import { useWorkoutGraphData } from "@/api/workouts/queries";
-import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
-import { useMemo } from "react";
+import { useWorkoutChartData } from "@/api/workouts/queries";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 export default function WorkoutSummary() {
-  const now = new Date();
-  const halfYearAgo = subMonths(now, 6);
-  const from = startOfMonth(halfYearAgo);
-  const to = endOfMonth(now);
-  const { data } = useWorkoutGraphData(from, to);
+  const { data } = useWorkoutChartData();
 
-  const monthlyData = useMemo(() => {
-    if (!data) return [];
+  console.log(data);
 
-    const dataByMonth = data.reduce((acc, workout) => {
-      const date = new Date(workout.startedAt);
-      const monthKey = format(date, "yyyy-MM");
-      const monthName = format(date, "MMMM yyyy");
+  if (!data) return null;
 
-      if (!acc.has(monthKey)) {
-        acc.set(monthKey, { month: monthName, workouts: 1, totalVolume: 0 });
-      }
+  const chartConfig = {
+    totalVolume: {
+      label: "Volume",
+      color: "var(--chart-1)",
+    },
+  } satisfies ChartConfig;
 
-      acc.get(monthKey)!.totalVolume += workout.totalVolume;
-      acc.get(monthKey)!.workouts++;
-      return acc;
-    }, new Map<string, { month: string; workouts: number; totalVolume: number }>());
-
-    // Convert to array and sort chronologically
-    return Array.from(dataByMonth.values()).sort((a, b) => {
-      const dateA = new Date(a.month);
-      const dateB = new Date(b.month);
-      return dateA.getTime() - dateB.getTime();
-    });
-  }, [data]);
-
-  console.log(monthlyData);
-
-  return <div>workout summary</div>;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Line Chart - Linear</CardTitle>
+        <CardDescription>January - June 2025</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <AreaChart
+            accessibilityLayer
+            data={data?.daily}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="period"
+              tickLine={true}
+              axisLine={true}
+              tickMargin={8}
+              tickFormatter={(value) => value}
+            />
+            <YAxis
+              dataKey="totalVolume"
+              tickLine={true}
+              axisLine={true}
+              tickMargin={8}
+              tickFormatter={(value) => value}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Area
+              dataKey="totalVolume"
+              type="linear"
+              fill="red"
+              fillOpacity={0.4}
+              stroke="red)"
+              dot={true}
+            />
+          </AreaChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
 }

@@ -10,7 +10,7 @@ import {
   type WorkoutStatsData,
   type WorkoutData,
   type WorkoutsResponse,
-  type WorkoutGraphData,
+  type WorkoutChartData,
 } from "./types";
 import { getDayRangeUTC } from "@/lib/utils";
 import {
@@ -92,18 +92,12 @@ export function useWorkoutWeeklyStats(from: Date, to: Date) {
   });
 }
 
-export function useWorkoutGraphData(from: Date, to: Date) {
+export function useWorkoutChartData() {
   const { apiClient } = useApiClient();
 
-  const searchParams = new URLSearchParams();
-  searchParams.set("from", from.toISOString());
-  searchParams.set("to", to.toISOString());
-  const queryString = searchParams.toString();
-
-  return useQuery<WorkoutGraphData[]>({
-    queryKey: ["workouts", "graph", { from, to }],
-    queryFn: () =>
-      apiClient<WorkoutGraphData[]>(`/workouts/graph?${queryString}`),
+  return useQuery<WorkoutChartData>({
+    queryKey: ["workouts", "chart"],
+    queryFn: () => apiClient<WorkoutChartData>(`/workouts/chart`),
   });
 }
 
