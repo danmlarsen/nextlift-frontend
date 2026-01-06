@@ -21,7 +21,7 @@ export default function WorkoutSummary() {
           <TabsTrigger value="monthly">Monthly</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="daily">
+        <TabsContent value="daily" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Total Training Volume</CardTitle>
@@ -48,7 +48,7 @@ export default function WorkoutSummary() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="weekly">
+        <TabsContent value="weekly" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Total Training Volume</CardTitle>
@@ -77,7 +77,7 @@ export default function WorkoutSummary() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="monthly">
+        <TabsContent value="monthly" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Total Training Volume</CardTitle>
