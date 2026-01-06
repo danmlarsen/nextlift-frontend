@@ -62,9 +62,9 @@ export default function WorkoutChart({
         <Area
           dataKey={yKey}
           type="monotone"
-          fill="red"
-          fillOpacity={0.4}
-          stroke="red)"
+          fill="var(--chart-1)"
+          fillOpacity={0.25}
+          stroke="var(--chart-1)"
           dot={true}
         />
       </AreaChart>
