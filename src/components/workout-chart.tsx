@@ -35,8 +35,8 @@ export default function WorkoutChart({
         accessibilityLayer
         data={data}
         margin={{
-          left: 12,
-          right: 12,
+          left: 0,
+          right: 0,
         }}
       >
         <CartesianGrid vertical={false} />
@@ -52,7 +52,7 @@ export default function WorkoutChart({
           tickLine={true}
           axisLine={true}
           tickMargin={8}
-          tickCount={8}
+          tickCount={6}
           tickFormatter={(value) => formatCompactNumber(value)}
         />
         <ChartTooltip
