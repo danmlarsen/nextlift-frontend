@@ -8,8 +8,6 @@ import WorkoutChart from "@/components/workout-chart";
 export default function WorkoutSummary() {
   const { data } = useWorkoutChartData();
 
-  console.log(data);
-
   if (!data) return null;
 
   return (

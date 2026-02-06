@@ -19,6 +19,7 @@ export default function HomePage() {
           </Button>
         </div>
         <div className="space-y-4 sm:col-start-1 sm:row-start-1">
+          {/* Test */}
           <LifetimeWorkoutsStats />
           <WeeklyReportStats />
         </div>
