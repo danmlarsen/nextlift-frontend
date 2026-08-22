@@ -3,7 +3,7 @@ import { defineConfig } from "orval";
 export default defineConfig({
   api: {
     input: {
-      target: "../workout-tracker-backend/openapi.json",
+      target: "../nextlift-backend/openapi.json",
     },
     output: {
       target: "src/api/generated/endpoints.ts",
