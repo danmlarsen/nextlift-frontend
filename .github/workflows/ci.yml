@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  verify:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    env:
+      # Build fails fast without this (see src/lib/constants.ts); a placeholder
+      # is fine for compilation. Vercel owns the real deploy + env vars.
+      NEXT_PUBLIC_API_URL: https://api.example.test
+    steps:
+      - uses: actions/checkout@v4
+      # No version input: reads the pinned pnpm from package.json "packageManager".
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test:run
+      - run: pnpm build
