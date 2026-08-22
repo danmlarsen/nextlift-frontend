@@ -25,7 +25,7 @@ pnpm install
 
 # Configure environment
 cp .env.local.example .env.local
-#   NEXT_PUBLIC_API_URL       -> the backend, e.g. http://localhost:3000
+#   NEXT_PUBLIC_API_URL       -> the backend incl. its /v1 prefix, e.g. http://localhost:3000/v1
 #   NEXT_PUBLIC_RECAPTCHA_SITE_KEY -> reCAPTCHA v3 site key (optional in dev)
 
 # Start the dev server (Turbopack)
@@ -34,6 +34,12 @@ pnpm dev
 
 The app runs on `http://localhost:3002`. **The backend must be running** (default
 `http://localhost:3000`) — see `../nextlift-backend`.
+
+> **`NEXT_PUBLIC_API_URL` must include the backend's `/v1` version prefix.** The
+> backend uses URI versioning (`defaultVersion: '1'`), so every route lives under
+> `/v1` (e.g. `/v1/auth/login`); the client appends paths directly to
+> `NEXT_PUBLIC_API_URL`. Locally that means `http://localhost:3000/v1`; in
+> production it is the deployed backend origin + `/v1`.
 
 > `NEXT_PUBLIC_API_URL` is required: the build fails fast if it is unset
 > (see `src/lib/constants.ts`).
