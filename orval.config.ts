@@ -3,7 +3,7 @@ import { defineConfig } from "orval";
 export default defineConfig({
   api: {
     input: {
-      target: "../workout-tracker-backend/openapi.json",
+      target: "../nextlift-backend/openapi.json",
     },
     output: {
       target: "src/api/generated/endpoints.ts",
@@ -11,7 +11,6 @@ export default defineConfig({
       client: "react-query",
       httpClient: "fetch",
       clean: true,
-      prettier: true,
       mode: "tags-split",
       override: {
         fetch: {

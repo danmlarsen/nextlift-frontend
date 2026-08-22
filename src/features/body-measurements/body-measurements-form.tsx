@@ -40,8 +40,6 @@ export default function BodyMeasurementsForm({
     },
   });
 
-  console.log(measurementData);
-
   function handleSubmit(data: z.infer<typeof bodyMeasurementSchema>) {
     onSubmit(data);
   }

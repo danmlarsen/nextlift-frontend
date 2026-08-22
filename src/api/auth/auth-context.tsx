@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import Logo from "@/components/logo";
@@ -53,6 +59,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const queryClient = useQueryClient();
+  // De-duplicate concurrent refreshes: many 401s at once share one request.
+  const refreshPromiseRef = useRef<Promise<string | null> | null>(null);
 
   const login = (token: string) => {
     setAccessToken(token);
@@ -165,8 +173,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const changePassword = async (
     currentPassword: string,
     newPassword: string,
-  ) => {
-    if (!accessToken) return;
+  ): Promise<AuthResult> => {
+    if (!accessToken) {
+      return {
+        success: false,
+        message: "You must be signed in to change your password.",
+      };
+    }
 
     try {
       const res = await fetch(`${API_URL}/auth/change-password`, {
@@ -325,27 +338,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     queryClient.clear();
   };
 
-  const refresh = async () => {
-    try {
-      const res = await fetch(`${API_URL}/auth/refresh`, {
-        method: "POST",
-        credentials: "include",
-      });
+  const refresh = async (): Promise<string | null> => {
+    // If a refresh is already in flight, reuse it instead of firing another.
+    if (refreshPromiseRef.current) {
+      return refreshPromiseRef.current;
+    }
 
-      if (res.ok) {
-        const { access_token: accessToken } = await res.json();
-        setAccessToken(accessToken);
-        return accessToken;
+    const doRefresh = async (): Promise<string | null> => {
+      try {
+        const res = await fetch(`${API_URL}/auth/refresh`, {
+          method: "POST",
+          credentials: "include",
+        });
+
+        if (res.ok) {
+          const { access_token: newAccessToken } = (await res.json()) as {
+            access_token: string;
+          };
+          setAccessToken(newAccessToken);
+          return newAccessToken;
+        }
+
+        setAccessToken(null);
+        localStorage.removeItem(SESSION_FLAG);
+        return null;
+      } catch {
+        setAccessToken(null);
+        return null;
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      setAccessToken(null);
-      localStorage.removeItem(SESSION_FLAG);
-      return null;
-    } catch {
-      setAccessToken(null);
-      return null;
+    const promise = doRefresh();
+    refreshPromiseRef.current = promise;
+    try {
+      return await promise;
     } finally {
-      setIsLoading(false);
+      refreshPromiseRef.current = null;
     }
   };
 

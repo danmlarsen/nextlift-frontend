@@ -19,6 +19,7 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
               href="https://www.danmarius.no"
               className="hover:text-foreground underline underline-offset-2 transition-colors duration-300"
               target="_blank"
+              rel="noopener noreferrer"
             >
               danmarius.no
             </Link>

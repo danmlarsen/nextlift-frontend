@@ -2,7 +2,8 @@ import { useCallback } from "react";
 
 type HapticStyle = "light" | "medium" | "heavy" | "success" | "error";
 
-const hasVibration = typeof navigator !== undefined && "vibrate" in navigator;
+const hasVibration =
+  typeof navigator !== "undefined" && "vibrate" in navigator;
 
 export function useHaptics(options?: { enabled?: boolean }) {
   const { enabled = true } = options ?? {};

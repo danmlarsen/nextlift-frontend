@@ -1,4 +1,15 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL;
+function requireApiUrl(): string {
+  const url = process.env.NEXT_PUBLIC_API_URL;
+  if (!url) {
+    throw new Error(
+      "NEXT_PUBLIC_API_URL is not set — define it in .env.local (see .env.local.example). " +
+        "Without it every request would be made to `undefined/...`.",
+    );
+  }
+  return url;
+}
+
+export const API_URL = requireApiUrl();
 export const DEFAULT_LIST_ITEM_AMOUNT = 5;
 export const WORKOUT_LIST_ITEM_AMOUNT = 5;
 export const EXERCISE_LIST_ITEM_AMOUNT = 20;

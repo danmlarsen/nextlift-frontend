@@ -61,7 +61,17 @@ export const useApiClient = () => {
     }
 
     if (!res.ok) {
-      const errorData = await res.json();
+      // A non-JSON error body (e.g. an HTML 502/503 from the proxy on a cold
+      // start) would otherwise throw a SyntaxError instead of a usable error.
+      let errorData: { statusCode: number; message: string; error?: string };
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = {
+          statusCode: res.status,
+          message: res.statusText || "Request failed",
+        };
+      }
       throw new ApiError(errorData);
     }
 

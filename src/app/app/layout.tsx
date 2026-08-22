@@ -27,7 +27,7 @@ export default function CoreLayout({ children }: CoreLayoutProps) {
           <ActiveWorkoutView />
           <Navigation />
         </div>
-        <ReactQueryDevtools />
+        {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
       </WorkoutModalProvider>
     </AuthGuard>
   );
