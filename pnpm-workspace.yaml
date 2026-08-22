@@ -1,0 +1,8 @@
+# pnpm 11 requires explicit approval of dependency build scripts.
+# Without this file `pnpm install` exits 1 (ERR_PNPM_IGNORED_BUILDS),
+# which would break the Vercel/CI build.
+allowBuilds:
+  '@tailwindcss/oxide': true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
