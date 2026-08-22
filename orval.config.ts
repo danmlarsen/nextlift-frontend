@@ -11,7 +11,6 @@ export default defineConfig({
       client: "react-query",
       httpClient: "fetch",
       clean: true,
-      prettier: true,
       mode: "tags-split",
       override: {
         fetch: {
