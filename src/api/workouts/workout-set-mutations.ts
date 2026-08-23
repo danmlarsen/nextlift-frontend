@@ -1,6 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useApiClient } from "../client";
-import { type WorkoutData, type WorkoutSetDto } from "./types";
+import { useRecordCelebration } from "@/hooks/use-record-celebration";
+import {
+  type WorkoutData,
+  type WorkoutMutationResponse,
+  type WorkoutSetDto,
+} from "./types";
 
 export function useAddWorkoutSet() {
   const { apiClient } = useApiClient();
@@ -33,6 +38,7 @@ export function useAddWorkoutSet() {
 export function useUpdateWorkoutSet() {
   const { apiClient } = useApiClient();
   const queryClient = useQueryClient();
+  const celebrateNewRecords = useRecordCelebration();
 
   return useMutation({
     mutationFn: ({
@@ -46,7 +52,7 @@ export function useUpdateWorkoutSet() {
       setId: number;
       data: WorkoutSetDto;
     }) =>
-      apiClient<WorkoutData>(
+      apiClient<WorkoutMutationResponse>(
         `/workouts/${workoutId}/workoutExercises/${workoutExerciseId}/sets/${setId}`,
         {
           method: "PATCH",
@@ -95,11 +101,18 @@ export function useUpdateWorkoutSet() {
         queryClient.setQueryData(context.queryKey, context.previousWorkout);
       }
     },
-    onSuccess: async (updatedWorkout, vars) => {
+    onSuccess: async (response, vars) => {
+      // Keep the cached workout canonical: newRecords is a one-shot signal
+      const { newRecords, ...updatedWorkout } = response;
       queryClient.setQueryData(
         ["workout", { id: vars.workoutId }],
         updatedWorkout,
       );
+      if (newRecords?.length) {
+        celebrateNewRecords(newRecords);
+      }
+      // A set edit can also demote a record, so always mark records stale
+      await queryClient.invalidateQueries({ queryKey: ["personalRecords"] });
     },
   });
 }
@@ -130,6 +143,8 @@ export function useDeleteWorkoutSet() {
         ["workout", { id: vars.workoutId }],
         updatedWorkout,
       );
+      // Deleting a record-holding set re-derives the records server-side
+      await queryClient.invalidateQueries({ queryKey: ["personalRecords"] });
     },
   });
 }
