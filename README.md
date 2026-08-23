@@ -27,6 +27,7 @@ pnpm install
 cp .env.local.example .env.local
 #   NEXT_PUBLIC_API_URL       -> the backend incl. its /v1 prefix, e.g. http://localhost:3000/v1
 #   NEXT_PUBLIC_RECAPTCHA_SITE_KEY -> reCAPTCHA v3 site key (optional in dev)
+#   NEXT_PUBLIC_SITE_URL      -> canonical site origin for metadataBase/OG (optional)
 
 # Start the dev server (Turbopack)
 pnpm dev
@@ -109,7 +110,9 @@ Production, and pull requests get Preview deployments. There is no `vercel.json`
 — build settings and environment variables live in the Vercel dashboard.
 
 1. **Environment variables** (Project → Settings → Environment Variables), for
-   Production and Preview: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`.
+   Production and Preview: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`;
+   Production only: `NEXT_PUBLIC_SITE_URL` — the canonical site origin used for
+   `metadataBase`/OG URLs (optional; falls back to the deployment URL).
 2. **Install/build**: pnpm is used automatically (pinned via `packageManager`).
 3. **Deploy**: push a branch → Preview build → open a PR to review; merge to
    `main` → Production.
