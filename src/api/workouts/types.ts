@@ -1,4 +1,5 @@
 import { type ExerciseData } from "../exercises/types";
+import { type NewRecordData } from "../personal-records/types";
 
 export type WorkoutsResponse = {
   success: boolean;
@@ -67,6 +68,12 @@ export type WorkoutSetData = {
   setNumber: number;
   notes: string | null;
   type: WorkoutSetType;
+};
+
+// Set mutations may carry freshly detected personal records alongside the
+// workout; the records are stripped before the workout is cached.
+export type WorkoutMutationResponse = WorkoutData & {
+  newRecords?: NewRecordData[];
 };
 
 export type WorkoutSetDto = {

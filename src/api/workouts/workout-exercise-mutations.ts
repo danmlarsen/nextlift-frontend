@@ -91,6 +91,8 @@ export function useDeleteWorkoutExercise() {
       await queryClient.invalidateQueries({
         queryKey: ["workouts"],
       });
+      // Removing an exercise can drop its records; re-derived server-side
+      await queryClient.invalidateQueries({ queryKey: ["personalRecords"] });
     },
   });
 }

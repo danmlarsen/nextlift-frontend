@@ -20,6 +20,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import WorkoutModalHeader from "./workout-modal-header";
 import { WorkoutData } from "@/api/workouts/types";
 import WorkoutHistoryItem from "../workout-history/workout-history-item";
+import WorkoutRecordsSummary from "@/features/personal-records/workout-records-summary";
 import { Button } from "@/components/ui/button";
 
 interface WorkoutModalProviderContextValue {
@@ -178,11 +179,12 @@ export default function WorkoutModalProvider({
               <div>
                 <p>Workout Completed!</p>
               </div>
-              <div>
+              <div className="space-y-4">
                 <WorkoutHistoryItem
                   workout={summarizeWorkout(workout)}
                   interactable={false}
                 />
+                <WorkoutRecordsSummary workoutId={workout.id} />
               </div>
               <div>
                 <Button
