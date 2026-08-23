@@ -17,6 +17,9 @@ export default function HomePage() {
           <Button className="w-full" asChild>
             <Link href="/app/body-measurements">Bodyweight tracker</Link>
           </Button>
+          <Button className="w-full" asChild>
+            <Link href="/app/records">Personal records</Link>
+          </Button>
         </div>
         <div className="space-y-4 sm:col-start-1 sm:row-start-1">
           {/* Test */}
