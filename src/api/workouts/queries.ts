@@ -61,10 +61,22 @@ export function useWorkout(id?: number) {
 
 export function useActiveWorkout() {
   const { apiClient } = useApiClient();
+  const queryClient = useQueryClient();
 
   return useQuery<WorkoutData | null>({
     queryKey: ["activeWorkout"],
-    queryFn: () => apiClient<WorkoutData | null>("/workouts/active"),
+    queryFn: async () => {
+      const workout =
+        await apiClient<WorkoutData | null>("/workouts/active");
+
+      // The active endpoint already returns the full workout. Seed the detail
+      // cache so the overlay does not immediately request the same data again.
+      if (workout) {
+        queryClient.setQueryData(["workout", { id: workout.id }], workout);
+      }
+
+      return workout;
+    },
   });
 }
 

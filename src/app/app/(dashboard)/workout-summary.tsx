@@ -2,11 +2,46 @@
 
 import { useWorkoutChartData } from "@/api/workouts/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WorkoutChart from "@/components/workout-chart";
 
 export default function WorkoutSummary() {
-  const { data } = useWorkoutChartData();
+  const { data, isPending, isError, isFetching, refetch } =
+    useWorkoutChartData();
+
+  if (isPending) {
+    return (
+      <div className="space-y-4" aria-label="Loading workout summary">
+        <Skeleton className="h-9 w-64" />
+        <Skeleton className="h-[350px] w-full" />
+        <Skeleton className="h-[350px] w-full" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card role="alert">
+        <CardHeader>
+          <CardTitle>Could not load your workout summary</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-muted-foreground text-sm">
+            Check your connection and try again.
+          </p>
+          <Button
+            variant="outline"
+            disabled={isFetching}
+            onClick={() => void refetch()}
+          >
+            {isFetching ? "Retrying…" : "Try again"}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (!data) return null;
 
