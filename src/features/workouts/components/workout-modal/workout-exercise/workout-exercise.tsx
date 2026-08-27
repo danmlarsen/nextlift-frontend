@@ -28,6 +28,8 @@ import { useAddWorkoutSet } from "@/api/workouts/workout-set-mutations";
 import { useWorkoutModal } from "../workout-modal-provider";
 import { useHaptics } from "@/hooks/use-haptics";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
+import { useFavoriteExerciseIds } from "@/api/exercises/queries";
+import { useSetExerciseFavorite } from "@/api/exercises/mutations";
 
 interface WorkoutExerciseProps {
   exerciseNum: number;
@@ -46,6 +48,8 @@ export default function WorkoutExercise({
   const addWorkoutSet = useAddWorkoutSet();
   const updateWorkoutExercise = useUpdateWorkoutExercise();
   const deleteWorkoutExercise = useDeleteWorkoutExercise();
+  const favoriteExerciseIds = useFavoriteExerciseIds();
+  const setFavorite = useSetExerciseFavorite();
   const { vibrate } = useHaptics();
 
   // Track pending add set mutations for this specific exercise
@@ -66,6 +70,10 @@ export default function WorkoutExercise({
   const { workoutSets } = workoutExercise;
   const previousWorkoutSets =
     workoutExercise.previousWorkoutExercise?.workoutSets;
+  const isFavorite =
+    favoriteExerciseIds.data?.exerciseIds.includes(
+      workoutExercise.exerciseId,
+    ) ?? false;
 
   const handleAddWorkoutSet = () => {
     vibrate();
@@ -98,12 +106,22 @@ export default function WorkoutExercise({
             </h2>
             <ChevronRightIcon className="size-4" />
           </button>
-          {isEditing && (
-            <WorkoutExerciseOptionsButton
-              onOpenNotes={() => setNotesOpen(true)}
-              onDelete={() => setDeleteExerciseOpen(true)}
-            />
-          )}
+          <WorkoutExerciseOptionsButton
+            canEdit={isEditing}
+            isFavorite={isFavorite}
+            favoriteDisabled={
+              !favoriteExerciseIds.isSuccess || setFavorite.isPending
+            }
+            onToggleFavorite={() => {
+              vibrate();
+              setFavorite.mutate({
+                exerciseId: workoutExercise.exerciseId,
+                isFavorite: !isFavorite,
+              });
+            }}
+            onOpenNotes={() => setNotesOpen(true)}
+            onDelete={() => setDeleteExerciseOpen(true)}
+          />
         </div>
 
         <WorkoutNotes

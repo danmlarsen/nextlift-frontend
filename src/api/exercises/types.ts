@@ -12,6 +12,7 @@ export type ExerciseData = {
   instructions: string | null;
   imageUrls: string[];
   videoUrls: string[];
+  isFavorite: boolean;
   timesUsed: number;
 };
 
@@ -27,9 +28,18 @@ export type ExercisesResponse = {
   success: boolean;
   meta: {
     hasNextPage: boolean;
-    nextCursor: number;
+    nextCursor: number | null;
   };
   data: ExerciseData[];
+};
+
+export type FavoriteExercisesResponse = {
+  exerciseIds: number[];
+};
+
+export type FavoriteExerciseResult = {
+  exerciseId: number;
+  isFavorite: boolean;
 };
 
 export type ExercisesQueryFilters = {
@@ -42,7 +52,7 @@ export type ExerciseWorkoutsResponse = {
   success: boolean;
   meta: {
     hasNextPage: boolean;
-    nextCursor: number;
+    nextCursor: number | null;
   };
   data: ExerciseWorkoutsData[];
 };

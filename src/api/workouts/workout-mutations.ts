@@ -142,6 +142,7 @@ export function useDeleteWorkout() {
     onSuccess: async (_, workoutId) => {
       queryClient.removeQueries({ queryKey: ["workout", { id: workoutId }] });
       await queryClient.invalidateQueries({ queryKey: ["workouts"] });
+      await queryClient.invalidateQueries({ queryKey: ["exercises"] });
       // Records anchored in the deleted workout are re-derived server-side
       await queryClient.invalidateQueries({ queryKey: ["personalRecords"] });
     },

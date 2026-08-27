@@ -4,6 +4,7 @@ import {
   type ExercisesQueryFilters,
   type ExerciseData,
   type ExerciseWorkoutsResponse,
+  type FavoriteExercisesResponse,
 } from "./types";
 import { useApiClient } from "../client";
 
@@ -25,6 +26,17 @@ export const useExercise = (exerciseId?: number) => {
     queryKey: ["exercises", exerciseId],
     queryFn: () => apiClient<ExerciseData>(`/exercises/${exerciseId}`),
     enabled: !!exerciseId,
+    staleTime: 60 * 60 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
+  });
+};
+
+export const useFavoriteExerciseIds = () => {
+  const { apiClient } = useApiClient();
+
+  return useQuery<FavoriteExercisesResponse>({
+    queryKey: ["exerciseFavorites"],
+    queryFn: () => apiClient<FavoriteExercisesResponse>("/exercises/favorites"),
     staleTime: 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
   });
