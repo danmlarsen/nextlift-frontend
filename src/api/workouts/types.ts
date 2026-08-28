@@ -119,10 +119,12 @@ export type WorkoutChartPeriodData = {
   totalVolume: number;
 };
 
+export const WORKOUT_CHART_RANGES = ["30d", "12w", "6m"] as const;
+export type WorkoutChartRange = (typeof WORKOUT_CHART_RANGES)[number];
+
 export type WorkoutChartData = {
-  monthly: WorkoutChartPeriodData[];
-  weekly: WorkoutChartPeriodData[];
-  daily: WorkoutChartPeriodData[];
+  granularity: "daily" | "weekly" | "monthly";
+  points: WorkoutChartPeriodData[];
 };
 
 export type WorkoutStatus = "DRAFT" | "ACTIVE" | "COMPLETED";

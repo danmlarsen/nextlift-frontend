@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+  keepPreviousData,
   useInfiniteQuery,
   useQuery,
   useQueryClient,
@@ -11,6 +12,7 @@ import {
   type WorkoutData,
   type WorkoutsResponse,
   type WorkoutChartData,
+  type WorkoutChartRange,
 } from "./types";
 import { getDayRangeUTC } from "@/lib/utils";
 import {
@@ -104,12 +106,15 @@ export function useWorkoutWeeklyStats(from: Date, to: Date) {
   });
 }
 
-export function useWorkoutChartData() {
+export function useWorkoutChartData(range: WorkoutChartRange) {
   const { apiClient } = useApiClient();
 
   return useQuery<WorkoutChartData>({
-    queryKey: ["workouts", "chart"],
-    queryFn: () => apiClient<WorkoutChartData>(`/workouts/chart`),
+    queryKey: ["workouts", "chart", range],
+    queryFn: () => apiClient<WorkoutChartData>(`/workouts/chart?range=${range}`),
+    // Keep the previous series visible while a new range loads so switching
+    // ranges doesn't flash the skeleton.
+    placeholderData: keepPreviousData,
   });
 }
 

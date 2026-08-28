@@ -1,15 +1,37 @@
 "use client";
 
+import { useState } from "react";
 import { useWorkoutChartData } from "@/api/workouts/queries";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { type WorkoutChartRange } from "@/api/workouts/types";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WorkoutChart from "@/components/workout-chart";
+import NewActiveWorkoutButton from "@/features/workouts/components/new-active-workout-button";
+
+const RANGE_OPTIONS: Array<{ value: WorkoutChartRange; label: string }> = [
+  { value: "30d", label: "30 days" },
+  { value: "12w", label: "12 weeks" },
+  { value: "6m", label: "6 months" },
+];
+
+const PERIOD_NOUN = {
+  daily: "day",
+  weekly: "week",
+  monthly: "month",
+} as const;
 
 export default function WorkoutSummary() {
+  const [range, setRange] = useState<WorkoutChartRange>("12w");
   const { data, isPending, isError, isFetching, refetch } =
-    useWorkoutChartData();
+    useWorkoutChartData(range);
 
   if (isPending) {
     return (
@@ -45,98 +67,83 @@ export default function WorkoutSummary() {
 
   if (!data) return null;
 
+  const hasWorkouts = data.points.some((point) => point.workouts > 0);
+  const periodNoun = PERIOD_NOUN[data.granularity];
+
   return (
     <div className="space-y-4">
-      <Tabs defaultValue="weekly">
-        <TabsList>
-          <TabsTrigger value="daily">Daily</TabsTrigger>
-          <TabsTrigger value="weekly">Weekly</TabsTrigger>
-          <TabsTrigger value="monthly">Monthly</TabsTrigger>
-        </TabsList>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-lg font-semibold">Progress</h2>
+        <Tabs
+          value={range}
+          onValueChange={(value) => setRange(value as WorkoutChartRange)}
+        >
+          <TabsList>
+            {RANGE_OPTIONS.map((option) => (
+              <TabsTrigger key={option.value} value={option.value}>
+                {option.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
 
-        <TabsContent value="daily" className="space-y-4">
+      {!hasWorkouts ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>No workouts in this period</CardTitle>
+            <CardDescription>
+              Complete a workout and your training volume and frequency will
+              show up here.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <NewActiveWorkoutButton />
+          </CardContent>
+        </Card>
+      ) : (
+        <>
           <Card>
             <CardHeader>
-              <CardTitle>Total Training Volume</CardTitle>
+              <CardTitle>Training volume</CardTitle>
+              <CardDescription>
+                Total weight lifted per {periodNoun} (kg), completed sets only
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <WorkoutChart
-                data={data.daily}
+                data={data.points}
                 yKey="totalVolume"
-                label="Daily Volume"
+                label="Volume"
+                unit="kg"
+                granularity={data.granularity}
+                variant="area"
+                color="var(--chart-1)"
+                showAverage
               />
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Frequency</CardTitle>
+              <CardTitle>Workout frequency</CardTitle>
+              <CardDescription>
+                Completed workouts per {periodNoun}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <WorkoutChart
-                data={data.daily}
+                data={data.points}
                 yKey="workouts"
                 label="Workouts"
+                granularity={data.granularity}
+                variant="bar"
+                color="var(--chart-2)"
+                integerYAxis
               />
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="weekly" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Total Training Volume</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <WorkoutChart
-                data={data.weekly}
-                yKey="totalVolume"
-                label="Weekly Volume"
-                periodFormatter={(value) => value.slice(6)}
-              />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Frequency</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <WorkoutChart
-                data={data.weekly}
-                yKey="workouts"
-                label="Workouts"
-                periodFormatter={(value) => value.slice(6)}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="monthly" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Total Training Volume</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <WorkoutChart
-                data={data.monthly}
-                yKey="totalVolume"
-                label="Daily Volume"
-              />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Frequency</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <WorkoutChart
-                data={data.monthly}
-                yKey="workouts"
-                label="Workouts"
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        </>
+      )}
     </div>
   );
 }
