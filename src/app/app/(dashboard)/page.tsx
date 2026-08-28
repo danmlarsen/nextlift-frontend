@@ -22,12 +22,12 @@ export default function HomePage() {
             <Link href="/app/records">Personal records</Link>
           </Button>
         </div>
-        <div className="space-y-4 sm:col-start-1 sm:row-start-1">
+        <div className="min-w-0 space-y-4 sm:col-start-1 sm:row-start-1">
           <LifetimeWorkoutsStats />
           <WeeklyReportStats />
           <ConsistencyStrip />
         </div>
-        <div>
+        <div className="min-w-0">
           <WorkoutSummary />
         </div>
       </div>
