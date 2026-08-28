@@ -4,6 +4,7 @@ import NewActiveWorkoutButton from "../../../features/workouts/components/new-ac
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import WorkoutSummary from "./workout-summary";
+import ConsistencyStrip from "./consistency-strip";
 
 export default function HomePage() {
   return (
@@ -22,9 +23,9 @@ export default function HomePage() {
           </Button>
         </div>
         <div className="space-y-4 sm:col-start-1 sm:row-start-1">
-          {/* Test */}
           <LifetimeWorkoutsStats />
           <WeeklyReportStats />
+          <ConsistencyStrip />
         </div>
         <div>
           <WorkoutSummary />
