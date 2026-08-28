@@ -13,6 +13,7 @@ import {
   type WorkoutsResponse,
   type WorkoutChartData,
   type WorkoutChartRange,
+  type WeeklyReportData,
 } from "./types";
 import { getDayRangeUTC } from "@/lib/utils";
 import {
@@ -103,6 +104,23 @@ export function useWorkoutWeeklyStats(from: Date, to: Date) {
     queryKey: ["workouts", "stats", { from, to }],
     queryFn: () =>
       apiClient<WorkoutStatsData>(`/workouts/stats?${queryString}`),
+  });
+}
+
+export function useWeeklyReport(weekStart: Date) {
+  const { apiClient } = useApiClient();
+
+  const searchParams = new URLSearchParams();
+  searchParams.set("weekStart", weekStart.toISOString());
+  const queryString = searchParams.toString();
+
+  return useQuery<WeeklyReportData>({
+    queryKey: ["workouts", "weekly-report", { weekStart }],
+    queryFn: () =>
+      apiClient<WeeklyReportData>(`/workouts/weekly-report?${queryString}`),
+    // Keep the previous report visible while navigating between weeks so
+    // prev/next doesn't flash the skeleton.
+    placeholderData: keepPreviousData,
   });
 }
 

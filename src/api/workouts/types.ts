@@ -109,6 +109,22 @@ export type WorkoutCalendarData = {
   totalWorkouts: number;
 };
 
+// Backend muscle values are free-form strings (seed data includes values
+// outside MUSCLE_GROUP_OPTIONS), so this is intentionally not TMuscleGroup.
+export type WeeklyReportMuscle = {
+  muscleGroup: string;
+  score: number;
+  sets: number;
+};
+
+export type WeeklyReportData = {
+  totalWorkouts: number;
+  totalMinutes: number;
+  totalWeightLifted: number;
+  weekStreak: number;
+  muscles: WeeklyReportMuscle[];
+};
+
 export type UpdateWorkoutExerciseDto = {
   notes?: string;
 };
