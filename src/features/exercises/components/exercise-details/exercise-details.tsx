@@ -2,6 +2,7 @@
 
 import { useExercise } from "@/api/exercises/queries";
 import ExerciseWorkoutsList from "./exercise-workouts-list";
+import ExerciseCharts from "./exercise-charts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getYouTubeEmbedUrl } from "@/lib/utils";
 
@@ -58,9 +59,7 @@ export default function ExerciseDetails({
                 )}
               </TabsContent>
               <TabsContent value="charts">
-                <p className="text-muted-foreground text-center">
-                  Charts coming soon
-                </p>
+                <ExerciseCharts exerciseId={exerciseId} />
               </TabsContent>
             </div>
           </Tabs>

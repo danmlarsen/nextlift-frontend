@@ -3,6 +3,7 @@ import {
   type ExercisesResponse,
   type ExercisesQueryFilters,
   type ExerciseData,
+  type ExerciseChartData,
   type ExerciseWorkoutsResponse,
   type FavoriteExercisesResponse,
 } from "./types";
@@ -82,6 +83,16 @@ export const useInfiniteExercises = ({
     getNextPageParam: (lastPage) => lastPage.meta.nextCursor,
     staleTime: 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
+  });
+};
+
+export const useExerciseChartData = (exerciseId?: number) => {
+  const { apiClient } = useApiClient();
+
+  return useQuery<ExerciseChartData>({
+    queryKey: ["exercises", { exerciseId }, "chart"],
+    queryFn: () => apiClient<ExerciseChartData>(`/exercises/${exerciseId}/chart`),
+    enabled: !!exerciseId,
   });
 };
 

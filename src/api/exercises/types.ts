@@ -60,3 +60,13 @@ export type ExerciseWorkoutsResponse = {
 export type ExerciseWorkoutsData = Omit<WorkoutData, "workoutExercises"> & {
   workoutSets: WorkoutSetData[];
 };
+
+export type ExerciseChartPoint = {
+  period: string;
+  estimatedOneRepMax: number;
+};
+
+export type ExerciseChartData = {
+  granularity: "weekly";
+  points: ExerciseChartPoint[];
+};
