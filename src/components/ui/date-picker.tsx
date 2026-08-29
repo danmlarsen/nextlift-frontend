@@ -15,9 +15,24 @@ import {
 interface DatePickerProps {
   defaultDate?: Date;
   onChange: (newDate: Date) => void;
+  /**
+   * "dropdown" adds month + year selects — use for far-away dates like a
+   * birth date, where paging month by month is unusable.
+   */
+  captionLayout?: React.ComponentProps<typeof Calendar>["captionLayout"];
+  /** Earliest navigable month (bounds the year dropdown). */
+  startMonth?: Date;
+  /** Latest navigable month (bounds the year dropdown). */
+  endMonth?: Date;
 }
 
-export function DatePicker({ defaultDate, onChange }: DatePickerProps) {
+export function DatePicker({
+  defaultDate,
+  onChange,
+  captionLayout,
+  startMonth,
+  endMonth,
+}: DatePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(defaultDate);
 
@@ -45,6 +60,10 @@ export function DatePicker({ defaultDate, onChange }: DatePickerProps) {
           mode="single"
           selected={date}
           onSelect={handleSetDate}
+          captionLayout={captionLayout}
+          startMonth={startMonth}
+          endMonth={endMonth}
+          defaultMonth={date}
           required
         />
       </PopoverContent>
