@@ -1,8 +1,6 @@
 import LifetimeWorkoutsStats from "./lifetime-workouts-stats";
 import WeeklyReportStats from "./weekly-report-stats";
 import NewActiveWorkoutButton from "../../../features/workouts/components/new-active-workout-button";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import WorkoutSummary from "./workout-summary";
 import ConsistencyStrip from "./consistency-strip";
 
@@ -15,12 +13,6 @@ export default function HomePage() {
       <div className="grid gap-4 sm:grid-cols-[1fr_15rem] sm:gap-8 lg:grid-cols-[1fr_16rem]">
         <div className="space-y-4 sm:col-start-2 sm:row-start-1">
           <NewActiveWorkoutButton />
-          <Button className="w-full" asChild>
-            <Link href="/app/body-measurements">Bodyweight tracker</Link>
-          </Button>
-          <Button className="w-full" asChild>
-            <Link href="/app/records">Personal records</Link>
-          </Button>
         </div>
         <div className="min-w-0 space-y-4 sm:col-start-1 sm:row-start-1">
           <LifetimeWorkoutsStats />

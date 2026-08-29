@@ -10,11 +10,18 @@ import {
   HomeIcon,
   LayoutTemplateIcon,
   ScaleIcon,
+  SettingsIcon,
+  TrophyIcon,
+  UserCogIcon,
+  UserRoundIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import Logo from "@/components/logo";
-import SettingsButton from "@/components/settings/settings-button";
+import SettingsButton, {
+  SettingsModal,
+} from "@/components/settings/settings-button";
+import { useSearchParamState } from "@/hooks/use-search-param-state";
 import {
   Drawer,
   DrawerContent,
@@ -24,13 +31,15 @@ import {
 } from "@/components/ui/drawer";
 
 // Desktop sidebar has room for a flat list; the mobile bottom bar collapses
-// History and Templates into one "Workouts" tab that opens a bottom menu.
+// History and Templates into one "Workouts" tab, and body tracking, records
+// and settings into one "Profile" tab — each opening a bottom menu.
 const desktopNavItems = [
   { label: "Home", href: "/app", icon: HomeIcon },
   { label: "Workouts", href: "/app/workouts", icon: BookOpenIcon },
   { label: "Templates", href: "/app/templates", icon: LayoutTemplateIcon },
   { label: "Exercises", href: "/app/exercises", icon: DumbbellIcon },
   { label: "Body", href: "/app/body-measurements", icon: ScaleIcon },
+  { label: "Records", href: "/app/records", icon: TrophyIcon },
 ];
 
 const workoutsMenuItems = [
@@ -38,9 +47,25 @@ const workoutsMenuItems = [
   { label: "Templates", href: "/app/templates", icon: LayoutTemplateIcon },
 ];
 
+const profileMenuItems = [
+  {
+    label: "Body profile",
+    href: "/app/body-measurements/profile",
+    icon: UserCogIcon,
+  },
+  {
+    label: "Bodyweight tracker",
+    href: "/app/body-measurements",
+    icon: ScaleIcon,
+  },
+  { label: "Personal records", href: "/app/records", icon: TrophyIcon },
+];
+
 export default function Navigation() {
   const pathname = usePathname();
   const [workoutsMenuOpen, setWorkoutsMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [, setSettingsOpen] = useSearchParamState("settings");
 
   // Sections with subroutes (e.g. /app/body-measurements/add) should keep
   // their nav item highlighted; the root matches only exactly.
@@ -52,6 +77,8 @@ export default function Navigation() {
   const isWorkoutsPath = workoutsMenuItems.some(
     (menuItem) => menuItem.href === pathname,
   );
+  const isProfilePath =
+    isActivePath("/app/body-measurements") || isActivePath("/app/records");
 
   return (
     <aside className="bg-sidebar text-sidebar-foreground border-background fixed inset-x-0 bottom-0 lg:inset-x-auto lg:inset-y-0 lg:w-[16rem] lg:py-8">
@@ -60,7 +87,7 @@ export default function Navigation() {
       </div>
       <nav className="mx-auto grid h-16 max-w-lg lg:h-auto lg:px-4">
         {/* Mobile bottom bar */}
-        <ul className="grid grid-cols-5 lg:hidden">
+        <ul className="grid grid-cols-4 lg:hidden">
           <li className="grid">
             <Link
               href="/app"
@@ -104,21 +131,18 @@ export default function Navigation() {
             </Link>
           </li>
           <li className="grid">
-            <Link
-              href="/app/body-measurements"
+            <button
+              onClick={() => setProfileMenuOpen(true)}
               className={cn(
                 "hover:text-accent grid place-items-center transition-colors duration-300",
-                isActivePath("/app/body-measurements") && "text-accent/75",
+                isProfilePath && "text-accent/75",
               )}
             >
               <div className="flex flex-col items-center">
-                <ScaleIcon size={20} />
-                <span>Body</span>
+                <UserRoundIcon size={20} />
+                <span>Profile</span>
               </div>
-            </Link>
-          </li>
-          <li className="grid place-items-center">
-            <SettingsButton />
+            </button>
           </li>
         </ul>
 
@@ -173,6 +197,49 @@ export default function Navigation() {
           </ul>
         </DrawerContent>
       </Drawer>
+
+      <Drawer open={profileMenuOpen} onOpenChange={setProfileMenuOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Profile</DrawerTitle>
+            <DrawerDescription className="sr-only">
+              Choose between body profile, body tracking, personal records and
+              settings
+            </DrawerDescription>
+          </DrawerHeader>
+          <ul className="grid gap-1 px-4 pb-8">
+            {profileMenuItems.map((menuItem) => (
+              <li key={menuItem.href} className="grid">
+                <Link
+                  href={menuItem.href}
+                  onClick={() => setProfileMenuOpen(false)}
+                  className={cn(
+                    "hover:text-accent flex items-center gap-4 rounded-lg px-4 py-3 transition-colors duration-300",
+                    pathname === menuItem.href && "text-accent/75",
+                  )}
+                >
+                  <menuItem.icon size={20} />
+                  <span>{menuItem.label}</span>
+                </Link>
+              </li>
+            ))}
+            <li className="grid">
+              <button
+                onClick={() => {
+                  setProfileMenuOpen(false);
+                  setSettingsOpen(true);
+                }}
+                className="hover:text-accent flex items-center gap-4 rounded-lg px-4 py-3 text-left transition-colors duration-300"
+              >
+                <SettingsIcon size={20} />
+                <span>Settings</span>
+              </button>
+            </li>
+          </ul>
+        </DrawerContent>
+      </Drawer>
+
+      <SettingsModal />
     </aside>
   );
 }
