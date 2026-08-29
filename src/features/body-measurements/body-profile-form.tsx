@@ -89,6 +89,9 @@ export default function BodyProfileForm({
                   <DatePicker
                     defaultDate={field.value}
                     onChange={field.onChange}
+                    captionLayout="dropdown"
+                    startMonth={new Date(1900, 0)}
+                    endMonth={new Date()}
                   />
                 </FormControl>
                 <FormMessage className="col-start-2" />
