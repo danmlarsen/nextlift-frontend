@@ -1,17 +1,16 @@
 "use client";
 
-import { toast } from "sonner";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useActiveWorkout } from "@/api/workouts/queries";
-import { useCreateActiveWorkout } from "@/api/workouts/workout-mutations";
-import { Spinner } from "@/components/ui/spinner";
 import { useWorkoutModal } from "./workout-modal/workout-modal-provider";
 import { useHaptics } from "@/hooks/use-haptics";
+import StartWorkoutOptionsModal from "./start-workout-options-modal";
 
 export default function NewActiveWorkoutButton() {
+  const [optionsOpen, setOptionsOpen] = useState(false);
   const { data: activeWorkout } = useActiveWorkout();
-  const createActiveWorkout = useCreateActiveWorkout();
   const { openWorkout } = useWorkoutModal();
   const { vibrate } = useHaptics();
 
@@ -21,27 +20,19 @@ export default function NewActiveWorkoutButton() {
     if (activeWorkout) {
       openWorkout(activeWorkout.id);
     } else {
-      createActiveWorkout.mutate(undefined, {
-        onSuccess: (newWorkout) => {
-          openWorkout(newWorkout.id);
-        },
-        onError: () => {
-          toast.error(
-            "Failed to create a new workout. This is probably due to a network issue. Please try again later.",
-          );
-        },
-      });
+      setOptionsOpen(true);
     }
   };
 
   return (
-    <Button
-      onClick={handleClick}
-      className="w-full"
-      disabled={createActiveWorkout.isPending}
-    >
-      {createActiveWorkout.isPending && <Spinner />}
-      {activeWorkout ? "Go to active workout" : "Start new Workout"}
-    </Button>
+    <>
+      <StartWorkoutOptionsModal
+        isOpen={optionsOpen}
+        onOpenChange={setOptionsOpen}
+      />
+      <Button onClick={handleClick} className="w-full">
+        {activeWorkout ? "Go to active workout" : "Start new Workout"}
+      </Button>
+    </>
   );
 }
