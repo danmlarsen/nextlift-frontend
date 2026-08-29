@@ -1,23 +1,6 @@
 import { type WeeklyReportData } from "@/api/workouts/types";
-import { Card, CardContent } from "@/components/ui/card";
+import StatCard from "@/components/stat-card";
 import { formatNumber, formatWeight } from "@/lib/utils";
-
-function StatCard({
-  value,
-  label,
-}: {
-  value: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <Card>
-      <CardContent className="flex flex-col items-center justify-center space-y-2 text-center">
-        <p className="text-3xl font-bold lg:text-4xl">{value}</p>
-        <p className="text-muted-foreground">{label}</p>
-      </CardContent>
-    </Card>
-  );
-}
 
 export default function WeeklyStatCards({ data }: { data: WeeklyReportData }) {
   return (

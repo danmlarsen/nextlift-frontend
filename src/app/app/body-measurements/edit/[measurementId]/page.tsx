@@ -8,6 +8,7 @@ import { useBodyMeasurement } from "@/api/body-measurements/queries";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import BodyMeasurementForm from "@/features/body-measurements/body-measurements-form";
+import { toMeasurementDto } from "@/features/body-measurements/to-measurement-dto";
 import { bodyMeasurementSchema } from "@/validation/bodyMeasurementSchema";
 import { useParams, useRouter } from "next/navigation";
 import z from "zod";
@@ -25,10 +26,7 @@ export default function EditBodyMeasurementsPage() {
 
   const handleSubmit = (data: z.infer<typeof bodyMeasurementSchema>) => {
     editBodyMeasurementMutation.mutate(
-      {
-        measuredAt: data.date.toISOString(),
-        weight: data.weight,
-      },
+      toMeasurementDto(data),
       {
         onSuccess: () => {
           router.push("/app/body-measurements");

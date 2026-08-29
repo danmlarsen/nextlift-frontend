@@ -1,12 +1,14 @@
 "use client";
 
 import { useBodyMeasurements } from "@/api/body-measurements/queries";
+import { useUserProfile } from "@/api/user-profile/queries";
 import BodyMeasurementsItem, {
   BodyMeasurementsItemSkeleton,
 } from "./body-measurements-item";
 
 export default function BodyMeasurementsList() {
   const { data, isLoading, isSuccess, isError } = useBodyMeasurements();
+  const { data: profile } = useUserProfile();
 
   return (
     <ul className="space-y-4">
@@ -20,6 +22,7 @@ export default function BodyMeasurementsList() {
             key={measurement.id}
             measurement={measurement}
             previousMeasurement={data.at(idx + 1) || undefined}
+            weightGoal={profile?.weightGoal}
           />
         ))}
       {isError && (

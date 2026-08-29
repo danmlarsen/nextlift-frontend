@@ -3,6 +3,7 @@
 import { useAddBodyMeasurement } from "@/api/body-measurements/mutations";
 import { Card } from "@/components/ui/card";
 import BodyMeasurementForm from "@/features/body-measurements/body-measurements-form";
+import { toMeasurementDto } from "@/features/body-measurements/to-measurement-dto";
 import { bodyMeasurementSchema } from "@/validation/bodyMeasurementSchema";
 import { useRouter } from "next/navigation";
 import z from "zod";
@@ -13,10 +14,7 @@ export default function AddBodyMeasurementsPage() {
 
   const handleSubmit = (data: z.infer<typeof bodyMeasurementSchema>) => {
     bodyMeasurementMutation.mutate(
-      {
-        measuredAt: data.date.toISOString(),
-        weight: data.weight,
-      },
+      toMeasurementDto(data),
       {
         onSuccess: () => {
           router.push("/app/body-measurements");

@@ -10,8 +10,17 @@ const VALUE_EPSILON = 1e-9;
 interface StatDeltaProps {
   current: number;
   previous?: number;
-  /** Unit label used when the change can't be shown as a percentage. */
+  /** Unit label used in absolute mode, or when a percentage is undefined. */
   unit?: string;
+  /** Show the change as an absolute value instead of a percentage. */
+  mode?: "percent" | "absolute";
+  /** Trailing label explaining what the change is measured against. */
+  suffix?: string;
+  /**
+   * Which direction gets the green arrow — an increase is not good news for
+   * every stat (e.g. bodyweight while cutting).
+   */
+  increaseIsGood?: boolean;
   className?: string;
 }
 
@@ -23,6 +32,9 @@ export default function StatDelta({
   current,
   previous,
   unit,
+  mode = "percent",
+  suffix = "vs prior week",
+  increaseIsGood = true,
   className,
 }: StatDeltaProps) {
   if (previous === undefined) return null;
@@ -48,7 +60,7 @@ export default function StatDelta({
   // With no meaningful previous value a percentage is undefined — fall back
   // to the absolute change.
   const text =
-    Math.abs(previous) < VALUE_EPSILON
+    mode === "absolute" || Math.abs(previous) < VALUE_EPSILON
       ? `${formatNumber(Math.abs(change))}${unit ? ` ${unit}` : ""}`
       : `${formatNumber(Math.abs(change / previous) * 100, { maximumFractionDigits: 0 })}%`;
 
@@ -61,10 +73,14 @@ export default function StatDelta({
     >
       <Icon
         aria-hidden="true"
-        className={cn("size-3", increased ? "text-green-500" : "text-red-500")}
+        className={cn(
+          "size-3",
+          increased === increaseIsGood ? "text-green-500" : "text-red-500",
+        )}
       />
       <span>
-        {text} vs prior week
+        {text}
+        {suffix ? ` ${suffix}` : ""}
         <span className="sr-only">{increased ? " (up)" : " (down)"}</span>
       </span>
     </p>
