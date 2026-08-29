@@ -9,6 +9,7 @@ import {
   HistoryIcon,
   HomeIcon,
   LayoutTemplateIcon,
+  ScaleIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ const desktopNavItems = [
   { label: "Workouts", href: "/app/workouts", icon: BookOpenIcon },
   { label: "Templates", href: "/app/templates", icon: LayoutTemplateIcon },
   { label: "Exercises", href: "/app/exercises", icon: DumbbellIcon },
+  { label: "Body", href: "/app/body-measurements", icon: ScaleIcon },
 ];
 
 const workoutsMenuItems = [
@@ -39,6 +41,13 @@ const workoutsMenuItems = [
 export default function Navigation() {
   const pathname = usePathname();
   const [workoutsMenuOpen, setWorkoutsMenuOpen] = useState(false);
+
+  // Sections with subroutes (e.g. /app/body-measurements/add) should keep
+  // their nav item highlighted; the root matches only exactly.
+  const isActivePath = (href: string) =>
+    href === "/app"
+      ? pathname === href
+      : pathname === href || pathname.startsWith(`${href}/`);
 
   const isWorkoutsPath = workoutsMenuItems.some(
     (menuItem) => menuItem.href === pathname,
@@ -51,7 +60,7 @@ export default function Navigation() {
       </div>
       <nav className="mx-auto grid h-16 max-w-lg lg:h-auto lg:px-4">
         {/* Mobile bottom bar */}
-        <ul className="grid grid-cols-4 lg:hidden">
+        <ul className="grid grid-cols-5 lg:hidden">
           <li className="grid">
             <Link
               href="/app"
@@ -85,12 +94,26 @@ export default function Navigation() {
               href="/app/exercises"
               className={cn(
                 "hover:text-accent grid place-items-center transition-colors duration-300",
-                pathname === "/app/exercises" && "text-accent/75",
+                isActivePath("/app/exercises") && "text-accent/75",
               )}
             >
               <div className="flex flex-col items-center">
                 <DumbbellIcon size={20} />
                 <span>Exercises</span>
+              </div>
+            </Link>
+          </li>
+          <li className="grid">
+            <Link
+              href="/app/body-measurements"
+              className={cn(
+                "hover:text-accent grid place-items-center transition-colors duration-300",
+                isActivePath("/app/body-measurements") && "text-accent/75",
+              )}
+            >
+              <div className="flex flex-col items-center">
+                <ScaleIcon size={20} />
+                <span>Body</span>
               </div>
             </Link>
           </li>
@@ -107,7 +130,7 @@ export default function Navigation() {
                 href={navItem.href}
                 className={cn(
                   "hover:text-accent grid place-items-center transition-colors duration-300 lg:justify-start",
-                  navItem.href === pathname && "text-accent/75",
+                  isActivePath(navItem.href) && "text-accent/75",
                 )}
               >
                 <div className="flex flex-col items-center lg:flex-row lg:gap-4 lg:px-4 lg:py-2">

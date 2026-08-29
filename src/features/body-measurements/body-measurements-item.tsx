@@ -1,20 +1,42 @@
 import { format } from "date-fns";
 import Link from "next/link";
-import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  StickyNoteIcon,
+} from "lucide-react";
 
 import { MeasurementData } from "@/api/body-measurements/types";
-import { formatNumber } from "@/lib/utils";
+import { type WeightGoal } from "@/api/user-profile/types";
+import { cn, formatNumber } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface BodyMeasurementItemProps {
   measurement: MeasurementData;
   previousMeasurement?: MeasurementData;
+  /** Colors the delta arrow by whether the change moves toward the goal. */
+  weightGoal?: WeightGoal | null;
 }
 
 export default function BodyMeasurementsItem({
   measurement,
   previousMeasurement,
+  weightGoal,
 }: BodyMeasurementItemProps) {
+  const change = previousMeasurement
+    ? measurement.weight - previousMeasurement.weight
+    : 0;
+  const increased = change > 0;
+  // Without a stated goal direction there is no good or bad change.
+  const deltaColor =
+    !weightGoal || weightGoal === "MAINTAIN"
+      ? "text-muted-foreground"
+      : increased === (weightGoal === "GAIN")
+        ? "text-green-500"
+        : "text-red-500";
+  const DeltaIcon = increased ? ChevronUpIcon : ChevronDownIcon;
+
   return (
     <li>
       <Link
@@ -24,30 +46,23 @@ export default function BodyMeasurementsItem({
         <div>{format(new Date(measurement.measuredAt), "PP")}</div>
         <div className="flex items-center gap-2">
           <div>{formatNumber(measurement.weight)} kg</div>
-          {previousMeasurement &&
-            previousMeasurement.weight < measurement.weight && (
-              <div className="text-muted-foreground flex items-center text-xs">
-                <ChevronUpIcon className="size-3 text-red-500" />
-                <p>
-                  {formatNumber(
-                    measurement.weight - previousMeasurement.weight,
-                  )}
-                  kg
-                </p>
-              </div>
-            )}
-          {previousMeasurement &&
-            previousMeasurement.weight > measurement.weight && (
-              <div className="text-muted-foreground flex items-center text-xs">
-                <ChevronDownIcon className="size-3 text-green-500" />
-                <p>
-                  {formatNumber(
-                    previousMeasurement.weight - measurement.weight,
-                  )}
-                  kg
-                </p>
-              </div>
-            )}
+          {!!previousMeasurement && change !== 0 && (
+            <div className="text-muted-foreground flex items-center text-xs">
+              <DeltaIcon className={cn("size-3", deltaColor)} />
+              <p>{formatNumber(Math.abs(change))}kg</p>
+            </div>
+          )}
+          {measurement.fatPercent != null && (
+            <div className="text-muted-foreground text-xs">
+              {formatNumber(measurement.fatPercent)}% fat
+            </div>
+          )}
+          {!!measurement.notes && (
+            <StickyNoteIcon
+              aria-label="Has notes"
+              className="text-muted-foreground size-3"
+            />
+          )}
         </div>
         <ChevronRightIcon aria-hidden="true" />
       </Link>

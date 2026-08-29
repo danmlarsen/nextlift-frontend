@@ -75,9 +75,11 @@ export const useApiClient = () => {
       throw new ApiError(errorData);
     }
 
-    const data = await res.json();
+    // Endpoints that resolve to null (e.g. an unset user profile) send an
+    // empty body, which res.json() would reject.
+    const text = await res.text();
 
-    return data as T;
+    return (text ? JSON.parse(text) : null) as T;
   };
 
   return { apiClient };
