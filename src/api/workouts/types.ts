@@ -68,6 +68,11 @@ export type WorkoutSetData = {
   setNumber: number;
   notes: string | null;
   type: WorkoutSetType;
+  // Target values carried over when the workout was started from a template.
+  // Surfaced as input placeholders and adopted on untouched completion.
+  suggestedReps: number | null;
+  suggestedWeight: number | null;
+  suggestedDuration: number | null;
 };
 
 // Set mutations may carry freshly detected personal records alongside the

@@ -103,13 +103,31 @@ export function getPlaceholderWorkoutSet(
 ): WorkoutSetData | undefined {
   // Find the most recent valid completed set in current or previous workout
   const completedSets = currentWorkoutSets?.filter(isValidCompletedSet) ?? [];
-  const placeholderSet =
+  const derivedSet =
     completedSets.length > 0
       ? completedSets[completedSets.length - 1]
       : (previousWorkoutSets?.[setIndex] ??
         previousWorkoutSets?.[previousWorkoutSets.length - 1]);
 
   const currentSet = currentWorkoutSets?.[setIndex];
+
+  // A set carrying its own template suggestions outranks the derived
+  // placeholder per field: a template's work-set target must not be shadowed
+  // by the just-completed warmup. Missing fields still fall back.
+  const placeholderSet =
+    currentSet &&
+    (currentSet.suggestedWeight != null ||
+      currentSet.suggestedReps != null ||
+      currentSet.suggestedDuration != null)
+      ? {
+          ...(derivedSet ?? currentSet),
+          weight: currentSet.suggestedWeight ?? derivedSet?.weight ?? null,
+          reps: currentSet.suggestedReps ?? derivedSet?.reps ?? null,
+          duration:
+            currentSet.suggestedDuration ?? derivedSet?.duration ?? null,
+        }
+      : derivedSet;
+
   if (currentSet?.completed) {
     return placeholderSet
       ? {

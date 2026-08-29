@@ -49,6 +49,23 @@ export function useCreateActiveWorkout() {
   });
 }
 
+export function useCreateWorkoutFromTemplate() {
+  const { apiClient } = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (templateId: number) =>
+      apiClient<WorkoutData>("/workouts/from-template", {
+        method: "POST",
+        body: JSON.stringify({ templateId }),
+      }),
+    onSuccess: (newWorkout) => {
+      queryClient.setQueryData(["activeWorkout"], newWorkout);
+      queryClient.setQueryData(["workout", { id: newWorkout.id }], newWorkout);
+    },
+  });
+}
+
 export function useCompleteWorkout() {
   const { apiClient } = useApiClient();
   const queryClient = useQueryClient();

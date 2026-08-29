@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useWorkoutModal } from "../../workout-modal/workout-modal-provider";
+import SetTypeBadge from "./set-type-badge";
 
 interface WorkoutSetOptionsButtonProps {
   workoutSet: WorkoutSetData;
@@ -35,16 +36,7 @@ export default function WorkoutSetOptionsButton({
           className="size-8 px-0 py-0 text-xs"
           disabled={!isEditing}
         >
-          {workoutSet.type === "normal" && workoutSet.setNumber}
-          {workoutSet.type === "warmup" && (
-            <span className="text-amber-500">W</span>
-          )}
-          {workoutSet.type === "dropset" && (
-            <span className="text-blue-500">D</span>
-          )}
-          {workoutSet.type === "failure" && (
-            <span className="text-red-500">F</span>
-          )}
+          <SetTypeBadge type={workoutSet.type} setNumber={workoutSet.setNumber} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -66,26 +58,11 @@ export default function WorkoutSetOptionsButton({
               variant="ghost"
               className="flex w-full justify-start gap-2 px-1 capitalize"
             >
-              {type === "normal" && (
-                <div className="bg-secondary-foreground flex size-8 items-center justify-center rounded-sm">
-                  {workoutSet.setNumber}
-                </div>
-              )}
-              {type === "warmup" && (
-                <div className="bg-secondary-foreground flex size-8 items-center justify-center rounded-sm text-amber-500">
-                  W
-                </div>
-              )}
-              {type === "dropset" && (
-                <div className="bg-secondary-foreground flex size-8 items-center justify-center rounded-sm text-blue-500">
-                  D
-                </div>
-              )}
-              {type === "failure" && (
-                <div className="bg-secondary-foreground flex size-8 items-center justify-center rounded-sm text-red-500">
-                  F
-                </div>
-              )}
+              <SetTypeBadge
+                type={type}
+                setNumber={workoutSet.setNumber}
+                className="bg-secondary-foreground flex size-8 items-center justify-center rounded-sm"
+              />
               <div>{type}</div>
             </Button>
           </DropdownMenuItem>

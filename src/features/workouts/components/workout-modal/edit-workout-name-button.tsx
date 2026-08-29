@@ -38,7 +38,7 @@ export default function EditWorkoutNameButton({
 
   const handleChangeName: ChangeEventHandler<HTMLInputElement> = (e) => {
     const newName = e.target.value;
-    if (newName.length > 32) return;
+    if (newName.length > 50) return;
 
     setNewWorkoutName(newName);
   };

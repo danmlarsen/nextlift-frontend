@@ -6,13 +6,13 @@ import { PencilIcon, TrashIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import WorkoutNotesDialog from "./workout-notes-dialog";
 import WorkoutNotesDeleteDialog from "./workout-notes-delete-dialog";
-import { useWorkoutModal } from "../workout-modal-provider";
 
 interface WorkoutNotesProps {
   notes: string | null;
   notesOpen: boolean;
   onNotesOpenChange: (open: boolean) => void;
   onUpdate: (notes: string) => void;
+  isEditing: boolean;
   showPlaceholder?: boolean;
 }
 
@@ -21,10 +21,10 @@ export default function WorkoutNotes({
   notesOpen,
   onNotesOpenChange,
   onUpdate,
+  isEditing,
   showPlaceholder = false,
 }: WorkoutNotesProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const { isEditing } = useWorkoutModal();
 
   const handleUpdateNotes = (notes: string) => {
     onUpdate(notes);

@@ -63,6 +63,7 @@ export default function WorkoutHistoryItem({
                 </Button>
                 <WorkoutHistoryItemDropdownMenu
                   workoutId={id}
+                  workoutTitle={workoutTitle}
                   onClickEdit={() => openWorkout(id)}
                 />
               </>

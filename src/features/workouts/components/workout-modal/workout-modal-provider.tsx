@@ -21,6 +21,7 @@ import WorkoutModalHeader from "./workout-modal-header";
 import { WorkoutData } from "@/api/workouts/types";
 import WorkoutHistoryItem from "../workout-history/workout-history-item";
 import WorkoutRecordsSummary from "@/features/personal-records/workout-records-summary";
+import SaveWorkoutAsTemplateButton from "@/features/workout-templates/components/save-workout-as-template-button";
 import { Button } from "@/components/ui/button";
 
 interface WorkoutModalProviderContextValue {
@@ -186,7 +187,8 @@ export default function WorkoutModalProvider({
                 />
                 <WorkoutRecordsSummary workoutId={workout.id} />
               </div>
-              <div>
+              <div className="space-y-2">
+                <SaveWorkoutAsTemplateButton workout={workout} />
                 <Button
                   className="w-full"
                   onClick={() => setShowWorkoutSummary(false)}

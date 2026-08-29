@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpenIcon, DumbbellIcon, HomeIcon } from "lucide-react";
+import {
+  BookOpenIcon,
+  DumbbellIcon,
+  HomeIcon,
+  LayoutTemplateIcon,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import Logo from "@/components/logo";
@@ -11,6 +16,7 @@ import SettingsButton from "@/components/settings/settings-button";
 const navItems = [
   { label: "Home", href: "/app", icon: HomeIcon },
   { label: "Workouts", href: "/app/workouts", icon: BookOpenIcon },
+  { label: "Templates", href: "/app/templates", icon: LayoutTemplateIcon },
   { label: "Exercises", href: "/app/exercises", icon: DumbbellIcon },
 ];
 
@@ -23,7 +29,7 @@ export default function Navigation() {
         <Logo className="w-full max-w-40" url="/app" />
       </div>
       <nav className="mx-auto grid h-16 max-w-lg lg:h-auto lg:px-4">
-        <ul className="grid grid-cols-4 lg:flex lg:flex-col lg:gap-4">
+        <ul className="grid grid-cols-5 lg:flex lg:flex-col lg:gap-4">
           {navItems.map((navItem) => (
             <li key={navItem.label} className="grid">
               <Link

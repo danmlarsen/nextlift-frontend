@@ -12,19 +12,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDeleteWorkout } from "@/api/workouts/workout-mutations";
+import { useCreateTemplateFromWorkout } from "@/api/workout-templates/mutations";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
+import TemplateNameDialog from "@/features/workout-templates/components/template-name-dialog";
 
 interface WorkoutHistoryItemDropdownMenuProps {
   workoutId: number;
+  workoutTitle: string;
   onClickEdit: () => void;
 }
 
 export default function WorkoutHistoryItemDropdownMenu({
   workoutId,
+  workoutTitle,
   onClickEdit,
 }: WorkoutHistoryItemDropdownMenuProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [saveTemplateDialogOpen, setSaveTemplateDialogOpen] = useState(false);
   const deleteWorkout = useDeleteWorkout();
+  const createTemplateFromWorkout = useCreateTemplateFromWorkout();
 
   const handleDelete = () => {
     deleteWorkout.mutate(workoutId, {
@@ -33,6 +39,21 @@ export default function WorkoutHistoryItemDropdownMenu({
       },
     });
     setDeleteDialogOpen(false);
+  };
+
+  const handleSaveAsTemplate = (name: string) => {
+    createTemplateFromWorkout.mutate(
+      { workoutId, name },
+      {
+        onSuccess: () => {
+          setSaveTemplateDialogOpen(false);
+          toast.success("Template saved");
+        },
+        onError: (error) => {
+          toast.error(error.message || "Failed to save template");
+        },
+      },
+    );
   };
 
   return (
@@ -46,6 +67,18 @@ export default function WorkoutHistoryItemDropdownMenu({
         variant="destructive"
       />
 
+      <TemplateNameDialog
+        key={String(saveTemplateDialogOpen)}
+        isOpen={saveTemplateDialogOpen}
+        onOpenChange={setSaveTemplateDialogOpen}
+        title="Save as Template"
+        description="Save this workout's exercises and sets as a reusable template."
+        defaultName={workoutTitle}
+        submitLabel="Save"
+        isPending={createTemplateFromWorkout.isPending}
+        onSubmit={handleSaveAsTemplate}
+      />
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button size="icon" variant="ghost">
@@ -55,6 +88,9 @@ export default function WorkoutHistoryItemDropdownMenu({
         <DropdownMenuContent>
           <DropdownMenuItem onSelect={onClickEdit}>
             Edit Workout
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setSaveTemplateDialogOpen(true)}>
+            Save as Template
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setDeleteDialogOpen(true)}>
             Delete Workout

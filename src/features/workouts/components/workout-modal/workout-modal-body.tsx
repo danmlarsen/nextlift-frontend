@@ -83,6 +83,7 @@ export default function WorkoutModalBody({
               data: { notes },
             })
           }
+          isEditing={isEditing}
           showPlaceholder
         />
 
