@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { addWeeks, endOfDay, format, startOfWeek, subWeeks } from "date-fns";
 
 import { useWorkoutCalendar } from "@/api/workouts/queries";
@@ -17,8 +17,6 @@ import { cn } from "@/lib/utils";
 const WEEKS_SHOWN = 52;
 
 export default function ConsistencyStrip() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   // Memoized so the query key stays stable across renders.
   const { from, to } = useMemo(() => {
     const now = new Date();
@@ -42,13 +40,6 @@ export default function ConsistencyStrip() {
     return counts;
   }, [data]);
 
-  // On viewports too narrow for a full year, start scrolled to the most
-  // recent weeks instead of a year ago.
-  useEffect(() => {
-    const element = scrollRef.current;
-    if (element) element.scrollLeft = element.scrollWidth;
-  }, [isSuccess]);
-
   if (isLoading) {
     return <Skeleton className="h-[150px] rounded-xl" />;
   }
@@ -65,32 +56,30 @@ export default function ConsistencyStrip() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div ref={scrollRef} className="overflow-x-auto">
-          <div
-            className="grid w-full min-w-[32rem] auto-cols-fr grid-flow-col gap-[2px]"
-            role="img"
-            aria-label={`Calendar of workouts per week over the last ${WEEKS_SHOWN} weeks`}
-          >
-            {Array.from({ length: WEEKS_SHOWN }).map((_, week) => {
-              const weekStart = addWeeks(from, week);
-              const count =
-                workoutsPerWeek.get(format(weekStart, "yyyy-MM-dd")) ?? 0;
+        <div
+          className="grid grid-cols-13 gap-1"
+          role="img"
+          aria-label={`Calendar of workouts per week over the last ${WEEKS_SHOWN} weeks`}
+        >
+          {Array.from({ length: WEEKS_SHOWN }).map((_, week) => {
+            const weekStart = addWeeks(from, week);
+            const count =
+              workoutsPerWeek.get(format(weekStart, "yyyy-MM-dd")) ?? 0;
 
-              return (
-                <div
-                  key={week}
-                  className={cn(
-                    "aspect-square w-full rounded-[2px]",
-                    count === 0 && "bg-muted/25",
-                    count === 1 && "bg-(--chart-1)/40",
-                    count === 2 && "bg-(--chart-1)/70",
-                    count >= 3 && "bg-(--chart-1)",
-                  )}
-                  title={`Week of ${format(weekStart, "MMM d")}: ${count} ${count === 1 ? "workout" : "workouts"}`}
-                />
-              );
-            })}
-          </div>
+            return (
+              <div
+                key={week}
+                className={cn(
+                  "aspect-square w-full rounded-sm",
+                  count === 0 && "bg-muted/25",
+                  count === 1 && "bg-(--chart-1)/40",
+                  count === 2 && "bg-(--chart-1)/70",
+                  count >= 3 && "bg-(--chart-1)",
+                )}
+                title={`Week of ${format(weekStart, "MMM d")}: ${count} ${count === 1 ? "workout" : "workouts"}`}
+              />
+            );
+          })}
         </div>
         <div className="text-muted-foreground flex items-center justify-end gap-1.5 text-xs">
           <span>Less</span>
