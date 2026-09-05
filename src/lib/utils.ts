@@ -96,18 +96,96 @@ export function isValidCompletedSet(set: WorkoutSetData | undefined): boolean {
   );
 }
 
+/**
+ * The comparable "load" of a set: weight for strength sets, duration for
+ * cardio sets. Used to decide whether a set done this session is heavier or
+ * lighter than what the previous workout did in the same slot.
+ */
+function getSetLoad(set: WorkoutSetData): number | null {
+  if (typeof set.weight === "number" && set.weight > 0) {
+    return set.weight;
+  }
+  if (typeof set.duration === "number" && set.duration > 0) {
+    return set.duration;
+  }
+  return null;
+}
+
+function hasSameLoad(a: WorkoutSetData, b: WorkoutSetData): boolean {
+  if (typeof a.weight === "number" && a.weight > 0) {
+    return a.weight === b.weight && a.reps === b.reps;
+  }
+  if (typeof a.duration === "number" && a.duration > 0) {
+    return a.duration === b.duration;
+  }
+  return false;
+}
+
+/**
+ * Picks the set whose values should be suggested for `setIndex` before any
+ * template suggestion or already-persisted value is layered on top.
+ *
+ * The previous workout's set in the same slot is the primary guess. A set
+ * completed earlier this session only carries forward when it is at or above
+ * that slot's historical load, so a light warmup never becomes the
+ * placeholder for the work sets that follow it. Without history for the slot
+ * the previous set in the session is suggested, as before.
+ */
+export function resolveDerivedWorkoutSet(
+  setIndex: number,
+  previousWorkoutSets: WorkoutSetData[] | undefined,
+  currentWorkoutSets?: WorkoutSetData[],
+): WorkoutSetData | undefined {
+  const currentSet = currentWorkoutSets?.[setIndex];
+  const prevAtIndex = previousWorkoutSets?.[setIndex];
+  const prevLast = previousWorkoutSets?.[previousWorkoutSets.length - 1];
+
+  const completedBefore = (currentWorkoutSets ?? [])
+    .slice(0, setIndex)
+    .map((set, index) => ({ set, index }))
+    .filter(({ set }) => isValidCompletedSet(set));
+  const lastCompleted = completedBefore[completedBefore.length - 1];
+  const carry = completedBefore
+    .filter(({ set }) => set.type !== "warmup")
+    .at(-1);
+
+  // No history for this slot: suggest the previous set in the session.
+  if (!prevAtIndex) {
+    return carry?.set ?? lastCompleted?.set ?? prevLast;
+  }
+
+  // Only warmups so far, or this set is itself a warmup: history wins.
+  if (!carry || currentSet?.type === "warmup") {
+    return prevAtIndex;
+  }
+
+  // The carried set replays last workout's set in the same slot, so the
+  // lifter is following that pattern (ramp-up, pyramid, straight sets).
+  const counterpart = previousWorkoutSets?.[carry.index];
+  if (counterpart && hasSameLoad(carry.set, counterpart)) {
+    return prevAtIndex;
+  }
+
+  // At or above the historical load: keep the momentum of this session.
+  // Below it: treat the lighter set as ramp-up and suggest history.
+  const carryLoad = getSetLoad(carry.set);
+  const prevLoad = getSetLoad(prevAtIndex);
+  if (carryLoad === null || prevLoad === null || carryLoad >= prevLoad) {
+    return carry.set;
+  }
+  return prevAtIndex;
+}
+
 export function getPlaceholderWorkoutSet(
   setIndex: number,
   previousWorkoutSets: WorkoutSetData[] | undefined,
   currentWorkoutSets?: WorkoutSetData[],
 ): WorkoutSetData | undefined {
-  // Find the most recent valid completed set in current or previous workout
-  const completedSets = currentWorkoutSets?.filter(isValidCompletedSet) ?? [];
-  const derivedSet =
-    completedSets.length > 0
-      ? completedSets[completedSets.length - 1]
-      : (previousWorkoutSets?.[setIndex] ??
-        previousWorkoutSets?.[previousWorkoutSets.length - 1]);
+  const derivedSet = resolveDerivedWorkoutSet(
+    setIndex,
+    previousWorkoutSets,
+    currentWorkoutSets,
+  );
 
   const currentSet = currentWorkoutSets?.[setIndex];
 
