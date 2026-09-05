@@ -1,10 +1,16 @@
-import { type WorkoutSetData } from "@/api/workouts/types";
+import {
+  type WorkoutData,
+  type WorkoutExerciseData,
+  type WorkoutSetData,
+} from "@/api/workouts/types";
+import { type ExerciseData } from "@/api/exercises/types";
 import {
   calculateOneRepMax,
   formatCompactNumber,
   formatNumber,
   getPlaceholderWorkoutSet,
   parseWorkoutTitle,
+  summarizeWorkout,
 } from "./utils";
 
 describe("utilts", () => {
@@ -137,6 +143,112 @@ describe("utilts", () => {
 
       expect(placeholder?.weight).toBe(60);
       expect(placeholder?.reps).toBe(10);
+    });
+  });
+
+  describe("summarizeWorkout()", () => {
+    let nextId = 1;
+    const makeSet = (overrides: Partial<WorkoutSetData>): WorkoutSetData => ({
+      id: nextId++,
+      workoutExerciseId: 1,
+      createdAt: "",
+      updatedAt: "",
+      completed: true,
+      reps: null,
+      weight: null,
+      duration: null,
+      setNumber: 1,
+      notes: null,
+      type: "normal",
+      suggestedReps: null,
+      suggestedWeight: null,
+      suggestedDuration: null,
+      ...overrides,
+    });
+    const makeExercise = (
+      category: ExerciseData["category"],
+      workoutSets: WorkoutSetData[],
+    ): WorkoutExerciseData => ({
+      id: nextId++,
+      workoutId: 1,
+      exerciseId: 1,
+      createdAt: "",
+      updatedAt: "",
+      exerciseOrder: 0,
+      notes: null,
+      workoutSets,
+      exercise: {
+        id: 1,
+        name: category === "strength" ? "Bench Press" : "Rowing",
+        userId: null,
+        category,
+        targetMuscleGroups: [],
+        secondaryMuscleGroups: [],
+        equipment: "",
+        instructions: null,
+        imageUrls: [],
+        videoUrls: [],
+        isFavorite: false,
+        timesUsed: 0,
+      },
+    });
+    const makeWorkout = (
+      workoutExercises: WorkoutExerciseData[],
+    ): WorkoutData => ({
+      id: 1,
+      createdAt: "",
+      updatedAt: "",
+      startedAt: "2025-01-01T10:00:00.000Z",
+      userId: 1,
+      status: "ACTIVE",
+      notes: null,
+      isPaused: false,
+      pauseDuration: 0,
+      lastPauseStartTime: null,
+      activeDuration: 0,
+      workoutExercises,
+    });
+
+    it("does not throw when an exercise has no sets", () => {
+      // Regression: removing the last set of an exercise mid-workout used to
+      // crash the app via an empty reduce with no initial value.
+      const workout = makeWorkout([
+        makeExercise("strength", []),
+        makeExercise("cardio", []),
+      ]);
+
+      expect(() => summarizeWorkout(workout)).not.toThrow();
+      const summary = summarizeWorkout(workout);
+      expect(summary.workoutExercises).toEqual([]);
+      expect(summary.totalWeight).toBe(0);
+      expect(summary.totalCompletedSets).toBe(0);
+    });
+
+    it("keeps exercises with sets and picks the best set", () => {
+      const workout = makeWorkout([
+        makeExercise("strength", []),
+        makeExercise("strength", [
+          makeSet({ weight: 60, reps: 10 }),
+          makeSet({ weight: 100, reps: 5 }),
+        ]),
+        makeExercise("cardio", [
+          makeSet({ duration: 10 }),
+          makeSet({ duration: 30 }),
+        ]),
+      ]);
+
+      const summary = summarizeWorkout(workout);
+
+      expect(summary.workoutExercises).toHaveLength(2);
+      expect(summary.workoutExercises[0].bestSet).toMatchObject({
+        weight: 100,
+        reps: 5,
+      });
+      expect(summary.workoutExercises[1].bestSet).toMatchObject({
+        duration: 30,
+      });
+      expect(summary.totalCompletedSets).toBe(4);
+      expect(summary.totalWeight).toBe(60 * 10 + 100 * 5);
     });
   });
 });
