@@ -175,6 +175,9 @@ export default function WorkoutModalProvider({
         isOpen={showWorkoutSummary && !!workout}
         onOpenChange={setShowWorkoutSummary}
         content={
+          // Guard on showWorkoutSummary too: JSX props are evaluated on every
+          // provider render, so the summary must only be computed when shown.
+          showWorkoutSummary &&
           workout && (
             <div className="grid grid-rows-[auto_1fr_auto] space-y-4 p-4 text-center">
               <div>

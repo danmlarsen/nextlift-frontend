@@ -251,21 +251,14 @@ export function summarizeWorkout(workout: WorkoutData) {
         0,
       );
 
-      let bestSet: Partial<WorkoutSetData | null> = null;
+      // An exercise can have zero sets (last set removed mid-workout); the
+      // helpers return null instead of throwing on an empty reduce.
+      let bestSet: WorkoutSetData | null = null;
       if (workoutExercise.exercise.category === "strength") {
-        bestSet = workoutExercise.workoutSets.reduce((best, current) => {
-          const currentOneRM = calculateOneRepMax(
-            current.weight!,
-            current.reps!,
-          );
-          const bestOneRM = calculateOneRepMax(best.weight!, best.reps!);
-          return currentOneRM > bestOneRM ? current : best;
-        });
+        bestSet = getBestSetByOneRM(workoutExercise.workoutSets);
       }
       if (workoutExercise.exercise.category === "cardio") {
-        bestSet = workoutExercise.workoutSets.reduce((best, current) =>
-          current.duration! > best.duration! ? current : best,
-        );
+        bestSet = getBestSetByDuration(workoutExercise.workoutSets);
       }
 
       return {
