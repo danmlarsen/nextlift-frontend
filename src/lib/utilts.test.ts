@@ -144,6 +144,165 @@ describe("utilts", () => {
       expect(placeholder?.weight).toBe(60);
       expect(placeholder?.reps).toBe(10);
     });
+
+    it("suggests last workout's set for the slot after a light untyped warmup", () => {
+      const previous = [
+        makeSet({ weight: 60, reps: 10 }),
+        makeSet({ setNumber: 2, weight: 80, reps: 8 }),
+        makeSet({ setNumber: 3, weight: 80, reps: 8 }),
+      ];
+      const current = [
+        makeSet({ completed: true, weight: 20, reps: 10 }),
+        makeSet({ setNumber: 2 }),
+      ];
+
+      const placeholder = getPlaceholderWorkoutSet(1, previous, current);
+
+      expect(placeholder?.weight).toBe(80);
+      expect(placeholder?.reps).toBe(8);
+    });
+
+    it("suggests the previous set in the session when there is no history", () => {
+      const current = [
+        makeSet({ completed: true, weight: 20, reps: 10 }),
+        makeSet({ setNumber: 2 }),
+      ];
+
+      const placeholder = getPlaceholderWorkoutSet(1, undefined, current);
+
+      expect(placeholder?.weight).toBe(20);
+      expect(placeholder?.reps).toBe(10);
+    });
+
+    it("never carries a typed warmup forward when history exists", () => {
+      const previous = [
+        makeSet({ weight: 80, reps: 8 }),
+        makeSet({ setNumber: 2, weight: 80, reps: 8 }),
+      ];
+      const current = [
+        makeSet({ completed: true, type: "warmup", weight: 60, reps: 10 }),
+        makeSet({ setNumber: 2 }),
+      ];
+
+      const placeholder = getPlaceholderWorkoutSet(1, previous, current);
+
+      expect(placeholder?.weight).toBe(80);
+      expect(placeholder?.reps).toBe(8);
+    });
+
+    it("carries a heavier-than-history set forward", () => {
+      const previous = [
+        makeSet({ weight: 80, reps: 8 }),
+        makeSet({ setNumber: 2, weight: 80, reps: 8 }),
+      ];
+      const current = [
+        makeSet({ completed: true, weight: 82.5, reps: 8 }),
+        makeSet({ setNumber: 2 }),
+      ];
+
+      const placeholder = getPlaceholderWorkoutSet(1, previous, current);
+
+      expect(placeholder?.weight).toBe(82.5);
+      expect(placeholder?.reps).toBe(8);
+    });
+
+    it("carries the same weight with more reps forward", () => {
+      const previous = [
+        makeSet({ weight: 80, reps: 8 }),
+        makeSet({ setNumber: 2, weight: 80, reps: 8 }),
+      ];
+      const current = [
+        makeSet({ completed: true, weight: 80, reps: 10 }),
+        makeSet({ setNumber: 2 }),
+      ];
+
+      const placeholder = getPlaceholderWorkoutSet(1, previous, current);
+
+      expect(placeholder?.weight).toBe(80);
+      expect(placeholder?.reps).toBe(10);
+    });
+
+    it("follows last workout's pattern when the session replays it", () => {
+      const previous = [
+        makeSet({ weight: 100, reps: 5 }),
+        makeSet({ setNumber: 2, weight: 90, reps: 8 }),
+        makeSet({ setNumber: 3, weight: 80, reps: 10 }),
+      ];
+      const current = [
+        makeSet({ completed: true, weight: 100, reps: 5 }),
+        makeSet({ setNumber: 2 }),
+      ];
+
+      const placeholder = getPlaceholderWorkoutSet(1, previous, current);
+
+      expect(placeholder?.weight).toBe(90);
+      expect(placeholder?.reps).toBe(8);
+    });
+
+    it("treats a set lighter than the slot's history as ramp-up", () => {
+      const previous = [
+        makeSet({ weight: 60, reps: 10 }),
+        makeSet({ setNumber: 2, weight: 80, reps: 8 }),
+      ];
+      const current = [
+        makeSet({ completed: true, weight: 60, reps: 5 }),
+        makeSet({ setNumber: 2 }),
+      ];
+
+      const placeholder = getPlaceholderWorkoutSet(1, previous, current);
+
+      expect(placeholder?.weight).toBe(80);
+      expect(placeholder?.reps).toBe(8);
+    });
+
+    it("suggests history's slot for a set typed as warmup", () => {
+      const previous = [
+        makeSet({ weight: 60, reps: 10 }),
+        makeSet({ setNumber: 2, weight: 80, reps: 8 }),
+      ];
+      const current = [
+        makeSet({ completed: true, weight: 80, reps: 8 }),
+        makeSet({ setNumber: 2, type: "warmup" }),
+      ];
+
+      const placeholder = getPlaceholderWorkoutSet(1, previous, current);
+
+      expect(placeholder?.weight).toBe(80);
+      expect(placeholder?.reps).toBe(8);
+    });
+
+    it("carries the last session set forward past the end of history", () => {
+      const previous = [
+        makeSet({ weight: 80, reps: 8 }),
+        makeSet({ setNumber: 2, weight: 80, reps: 8 }),
+      ];
+      const current = [
+        makeSet({ completed: true, weight: 80, reps: 8 }),
+        makeSet({ setNumber: 2, completed: true, weight: 80, reps: 8 }),
+        makeSet({ setNumber: 3, completed: true, weight: 85, reps: 6 }),
+        makeSet({ setNumber: 4 }),
+      ];
+
+      const placeholder = getPlaceholderWorkoutSet(3, previous, current);
+
+      expect(placeholder?.weight).toBe(85);
+      expect(placeholder?.reps).toBe(6);
+    });
+
+    it("compares cardio sets by duration", () => {
+      const previous = [
+        makeSet({ duration: 10 }),
+        makeSet({ setNumber: 2, duration: 20 }),
+      ];
+      const current = [
+        makeSet({ completed: true, duration: 5 }),
+        makeSet({ setNumber: 2 }),
+      ];
+
+      const placeholder = getPlaceholderWorkoutSet(1, previous, current);
+
+      expect(placeholder?.duration).toBe(20);
+    });
   });
 
   describe("summarizeWorkout()", () => {
