@@ -139,3 +139,20 @@ input[type="number"] {
 .grecaptcha-badge {
   visibility: hidden !important;
 }
+
+/*
+ * Full-screen mobile drawer (ResponsiveModal). While the on-screen keyboard
+ * is up, useKeyboardInset publishes its height on <html>; these rules size
+ * the drawer to the visible area and fall back to the full viewport when the
+ * variables are absent. `!important` outranks the inline height/bottom that
+ * vaul writes from its own keyboard handler, which can be left stale after
+ * an app switch (vaul#538).
+ */
+@layer components {
+  .drawer-fullscreen {
+    height: calc(
+      100dvh - var(--keyboard-inset, 0px) - var(--visual-viewport-top, 0px)
+    ) !important;
+    bottom: var(--keyboard-inset, 0px) !important;
+  }
+}

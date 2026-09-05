@@ -145,8 +145,8 @@ export default function WorkoutModalProvider({
             {isSuccess && workout && !showWorkoutSummary && (
               <div
                 className={cn(
-                  "grid h-[calc(100dvh-42px)] grid-rows-[auto_1fr] pb-4",
-                  isDesktop && "h-[100dvh] pt-4",
+                  "grid h-full grid-rows-[auto_1fr] pb-4",
+                  isDesktop && "pt-4",
                 )}
               >
                 <WorkoutModalHeader
