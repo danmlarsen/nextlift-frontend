@@ -72,9 +72,9 @@ export default function ConsistencyStrip() {
                 className={cn(
                   "aspect-square w-full rounded-sm",
                   count === 0 && "bg-muted/25",
-                  count === 1 && "bg-(--chart-1)/40",
-                  count === 2 && "bg-(--chart-1)/70",
-                  count >= 3 && "bg-(--chart-1)",
+                  count >= 1 && count <= 2 && "bg-(--chart-1)/40",
+                  count >= 3 && count <= 4 && "bg-(--chart-1)/70",
+                  count >= 5 && "bg-(--chart-1)",
                 )}
                 title={`Week of ${format(weekStart, "MMM d")}: ${count} ${count === 1 ? "workout" : "workouts"}`}
               />
