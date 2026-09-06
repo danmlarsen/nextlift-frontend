@@ -68,12 +68,42 @@ pnpm api:generate # orval codegen (see "API client" below)
 
 - `src/app/` — App Router routes and layouts (`(public)` marketing/auth, `app/`
   the authenticated product)
-- `src/features/` — feature modules (workouts, exercises, body-measurements, …)
+- `src/features/` — feature modules (workouts, exercises, programs, body-measurements, …)
 - `src/components/` — shared UI, incl. `components/ui/` (shadcn)
 - `src/api/` — the hand-written API client, auth context and data hooks
 - `src/react-query/` — the QueryClient
 - `src/validation/` — Zod schemas
 - `src/hooks/`, `src/lib/` — hooks, utilities and constants
+
+## Training programs
+
+`/app/programs` lists the curated library (filterable by goal, level and days
+per week) and the user's own programs; `/app/programs/[programId]` shows a
+program's blocks, weeks and days with an enroll wizard (start date, weekday
+mapping for calendar programs, starting loads prefilled from history);
+`/app/programs/active` is the active program: today's / next workout, week
+navigation with per-day actions (start, skip, jump), adherence, lift trends
+and a sheet to adjust numbers or swap exercises. Data hooks live in
+`src/api/programs/` and `src/api/program-enrollments/`; formatting helpers in
+`src/lib/program-format.ts`.
+
+Users build their own programs at `/app/programs/new` (a short wizard:
+basics, schedule, days) and refine them at `/app/programs/[programId]/edit`:
+a full-page editor with a per-week strip (labels, deload toggle, volume and
+load multipliers), day cards whose exercises and sets autosave through a
+debounced replace-all request, a progression form per exercise (linear with
+optional set × rep stages, double, percent of training max with AMRAP rules,
+RPE top-set or RIR mesocycle, fixed), template import and a readiness check
+mirroring the backend's enrollment validation. Curated programs can be copied
+into "Mine" with "Customize a copy". Editor state lives in
+`src/features/programs/editor/` (`draft.ts`, `use-day-autosave.ts`,
+`wizard-plan.ts`).
+
+Program workouts are ordinary workouts: their sets carry the prescription as
+`suggested*` fields plus a `programSetId`, which is what turns on the target
+chip, the RPE column, the AMRAP marker and the auto-starting rest timer in the
+workout modal. Free workouts and templates are untouched, and the dashboard
+card only renders while a program is being followed.
 
 ## Authentication
 

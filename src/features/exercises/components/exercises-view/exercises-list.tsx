@@ -15,7 +15,7 @@ import { useSearchParamState } from "@/hooks/use-search-param-state";
 
 interface ExercisesListProps {
   filters?: ExercisesQueryFilters;
-  onExerciseClick?: (id: number) => void;
+  onExerciseClick?: (id: number, exercise: ExerciseData) => void;
 }
 
 export default function ExercisesList({
@@ -43,7 +43,7 @@ export default function ExercisesList({
 
   const handleExerciseClick = (exercise: ExerciseData) => {
     if (onExerciseClick) {
-      onExerciseClick(exercise.id);
+      onExerciseClick(exercise.id, exercise);
     } else {
       setSelectedExercise(exercise);
       setExerciseDetailsModal(true);

@@ -3,13 +3,16 @@
 import { useMemo, useState } from "react";
 import { useDebounce } from "use-debounce";
 
-import { type ExercisesQueryFilters } from "@/api/exercises/types";
+import {
+  type ExerciseData,
+  type ExercisesQueryFilters,
+} from "@/api/exercises/types";
 import { type TEquipment, type TMuscleGroup } from "@/lib/constants";
 import ExercisesFilters from "./exercises-filters";
 import ExercisesList from "./exercises-list";
 
 interface ExercisesViewProps {
-  onExerciseClick?: (id: number) => void;
+  onExerciseClick?: (id: number, exercise: ExerciseData) => void;
 }
 
 export default function ExercisesView({ onExerciseClick }: ExercisesViewProps) {

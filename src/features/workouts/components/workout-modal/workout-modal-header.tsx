@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Timer from "@/components/ui/timer";
 import { useWorkoutModal } from "./workout-modal-provider";
 import { useUpdateWorkout } from "@/api/workouts/workout-mutations";
+import RestTimerBadge from "./rest-timer/rest-timer-badge";
 
 interface WorkoutModalHeaderProps {
   workout: WorkoutData;
@@ -36,7 +37,10 @@ export default function WorkoutModalHeader({
     <div className="flex items-center justify-between px-4 pb-4">
       {workout.status === "ACTIVE" && (
         <>
-          <Timer workout={workout} isButton={true} />
+          <div className="flex items-center gap-2">
+            <Timer workout={workout} isButton={true} />
+            <RestTimerBadge compact />
+          </div>
           <div className="flex gap-2">
             <Button onClick={closeWorkout}>Close</Button>
             <Button onClick={onClickComplete}>Finish</Button>

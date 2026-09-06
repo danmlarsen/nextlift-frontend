@@ -3,6 +3,7 @@ import { useApiClient } from "../client";
 import {
   type UpdateWorkoutDto,
   type WorkoutData,
+  type WorkoutMutationResponse,
   type CreateWorkoutDto,
 } from "./types";
 
@@ -72,14 +73,21 @@ export function useCompleteWorkout() {
 
   return useMutation({
     mutationFn: (workoutId: number) =>
-      apiClient<WorkoutData>(`/workouts/${workoutId}/complete`, {
+      apiClient<WorkoutMutationResponse>(`/workouts/${workoutId}/complete`, {
         method: "POST",
       }),
-    onSuccess: async (updatedWorkout, workoutId) => {
-      // queryClient.setQueryData(["activeWorkout"], null);
+    onSuccess: async (response, workoutId) => {
+      // Keep the cached workout canonical: progression is a one-shot signal
+      const { progression, ...updatedWorkout } = response;
       queryClient.setQueryData(["workout", { id: workoutId }], updatedWorkout);
       await queryClient.invalidateQueries({ queryKey: ["workouts"] });
       await queryClient.invalidateQueries({ queryKey: ["exercises"] });
+      if (progression) {
+        // The program's schedule and states moved on
+        await queryClient.invalidateQueries({
+          queryKey: ["programEnrollment"],
+        });
+      }
     },
   });
 }

@@ -83,6 +83,12 @@ describe("utilts", () => {
       suggestedReps: null,
       suggestedWeight: null,
       suggestedDuration: null,
+      rpe: null,
+      programSetId: null,
+      suggestedRepsMax: null,
+      suggestedRpe: null,
+      suggestedRestSeconds: null,
+      suggestedAmrap: false,
       ...overrides,
     });
 
@@ -322,6 +328,12 @@ describe("utilts", () => {
       suggestedReps: null,
       suggestedWeight: null,
       suggestedDuration: null,
+      rpe: null,
+      programSetId: null,
+      suggestedRepsMax: null,
+      suggestedRpe: null,
+      suggestedRestSeconds: null,
+      suggestedAmrap: false,
       ...overrides,
     });
     const makeExercise = (

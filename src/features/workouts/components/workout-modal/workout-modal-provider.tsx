@@ -23,6 +23,12 @@ import WorkoutHistoryItem from "../workout-history/workout-history-item";
 import WorkoutRecordsSummary from "@/features/personal-records/workout-records-summary";
 import SaveWorkoutAsTemplateButton from "@/features/workout-templates/components/save-workout-as-template-button";
 import { Button } from "@/components/ui/button";
+import { type ProgressionSummaryData } from "@/api/program-enrollments/types";
+import ProgramProgressionSummary from "@/features/programs/components/program-progression-summary";
+import {
+  RestTimerProvider,
+  useRestTimer,
+} from "./rest-timer/rest-timer-context";
 
 interface WorkoutModalProviderContextValue {
   workout?: WorkoutData;
@@ -42,13 +48,25 @@ interface WorkoutModalProviderProps {
 export default function WorkoutModalProvider({
   children,
 }: WorkoutModalProviderProps) {
+  return (
+    <RestTimerProvider>
+      <WorkoutModalProviderInner>{children}</WorkoutModalProviderInner>
+    </RestTimerProvider>
+  );
+}
+
+function WorkoutModalProviderInner({ children }: WorkoutModalProviderProps) {
   const [isOpen, setIsOpen] = useSearchParamState("workout-modal");
   const [workoutId, setWorkoutId] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(true);
   const [completeWorkoutDialogOpen, setCompleteWorkoutDialogOpen] =
     useState(false);
   const [showWorkoutSummary, setShowWorkoutSummary] = useState(false);
+  const [progression, setProgression] = useState<ProgressionSummaryData | null>(
+    null,
+  );
   const [deleteWorkoutOpen, setDeleteWorkoutOpen] = useState(false);
+  const { clearRest } = useRestTimer();
   const invalidateWorkout = useInvalidateWorkout();
   const {
     data: workout,
@@ -92,8 +110,10 @@ export default function WorkoutModalProvider({
     setCompleteWorkoutDialogOpen(false);
 
     completeWorkout.mutate(workout.id, {
-      onSuccess: () => {
+      onSuccess: (response) => {
+        setProgression(response.progression ?? null);
         setShowWorkoutSummary(true);
+        clearRest();
         closeWorkout();
         queryClient.setQueryData(["activeWorkout"], null);
       },
@@ -111,6 +131,7 @@ export default function WorkoutModalProvider({
 
   const handleDeleteWorkout = () => {
     if (!workout) return;
+    clearRest();
     closeWorkout();
     deleteWorkout.mutate(workout.id, {
       onSuccess: (data) => {
@@ -189,9 +210,14 @@ export default function WorkoutModalProvider({
                   interactable={false}
                 />
                 <WorkoutRecordsSummary workoutId={workout.id} />
+                {progression && (
+                  <ProgramProgressionSummary progression={progression} />
+                )}
               </div>
               <div className="space-y-2">
-                <SaveWorkoutAsTemplateButton workout={workout} />
+                {!progression && (
+                  <SaveWorkoutAsTemplateButton workout={workout} />
+                )}
                 <Button
                   className="w-full"
                   onClick={() => setShowWorkoutSummary(false)}

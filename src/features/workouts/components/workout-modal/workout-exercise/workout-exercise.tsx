@@ -30,6 +30,7 @@ import { useHaptics } from "@/hooks/use-haptics";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 import { useFavoriteExerciseIds } from "@/api/exercises/queries";
 import { useSetExerciseFavorite } from "@/api/exercises/mutations";
+import { formatRest, summarizeSets } from "@/lib/program-format";
 
 interface WorkoutExerciseProps {
   exerciseNum: number;
@@ -44,7 +45,8 @@ export default function WorkoutExercise({
 }: WorkoutExerciseProps) {
   const [notesOpen, setNotesOpen] = useState(false);
   const [deleteExerciseOpen, setDeleteExerciseOpen] = useState(false);
-  const { isEditing } = useWorkoutModal();
+  const { workout, isEditing } = useWorkoutModal();
+  const showRpe = !!workout?.programDayLog;
   const addWorkoutSet = useAddWorkoutSet();
   const updateWorkoutExercise = useUpdateWorkoutExercise();
   const deleteWorkoutExercise = useDeleteWorkoutExercise();
@@ -70,6 +72,30 @@ export default function WorkoutExercise({
   const { workoutSets } = workoutExercise;
   const previousWorkoutSets =
     workoutExercise.previousWorkoutExercise?.workoutSets;
+
+  // Program prescription for this exercise, summarized under the title.
+  const programSets = workoutSets.filter((set) => set.programSetId !== null);
+  const programSummary =
+    programSets.length > 0
+      ? [
+          summarizeSets(
+            programSets.map((set) => ({
+              type: set.type,
+              repsMin: set.suggestedReps,
+              repsMax: set.suggestedRepsMax ?? set.suggestedReps,
+              isAmrap: set.suggestedAmrap,
+              weight: set.suggestedWeight,
+              targetRpe: set.suggestedRpe,
+              duration: set.suggestedDuration,
+            })),
+          ),
+          formatRest(programSets[0].suggestedRestSeconds)
+            ? `rest ${formatRest(programSets[0].suggestedRestSeconds)}`
+            : null,
+        ]
+          .filter(Boolean)
+          .join(" · ")
+      : null;
   const isFavorite =
     favoriteExerciseIds.data?.exerciseIds.includes(
       workoutExercise.exerciseId,
@@ -124,6 +150,10 @@ export default function WorkoutExercise({
           />
         </div>
 
+        {programSummary && (
+          <p className="text-muted-foreground text-xs">{programSummary}</p>
+        )}
+
         <WorkoutNotes
           notes={workoutExercise.notes}
           notesOpen={notesOpen}
@@ -157,6 +187,9 @@ export default function WorkoutExercise({
                   <TableHead className="w-20 text-center">Minutes</TableHead>
                 </>
               )}
+              {showRpe && (
+                <TableHead className="w-16 text-center">RPE</TableHead>
+              )}
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
@@ -176,13 +209,14 @@ export default function WorkoutExercise({
                   exerciseCategory={workoutExercise.exercise.category}
                   previousSet={previousSet}
                   placeholderSet={placeholderSet}
+                  showRpe={showRpe}
                 />
               );
             })}
             {pendingAddSetCount > 0 &&
               Array.from({ length: pendingAddSetCount }, (_, i) => (
                 <TableRow key={`pending-set-${i}`}>
-                  <TableCell colSpan={5} className="h-13">
+                  <TableCell colSpan={showRpe ? 6 : 5} className="h-13">
                     <Skeleton className="h-10" />
                   </TableCell>
                 </TableRow>

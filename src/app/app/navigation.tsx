@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpenIcon,
+  CalendarRangeIcon,
   DumbbellIcon,
   HistoryIcon,
   HomeIcon,
@@ -37,6 +38,7 @@ const desktopNavItems = [
   { label: "Home", href: "/app", icon: HomeIcon },
   { label: "Workouts", href: "/app/workouts", icon: BookOpenIcon },
   { label: "Templates", href: "/app/templates", icon: LayoutTemplateIcon },
+  { label: "Programs", href: "/app/programs", icon: CalendarRangeIcon },
   { label: "Exercises", href: "/app/exercises", icon: DumbbellIcon },
   { label: "Body", href: "/app/body-measurements", icon: ScaleIcon },
   { label: "Records", href: "/app/records", icon: TrophyIcon },
@@ -45,6 +47,7 @@ const desktopNavItems = [
 const workoutsMenuItems = [
   { label: "History", href: "/app/workouts", icon: HistoryIcon },
   { label: "Templates", href: "/app/templates", icon: LayoutTemplateIcon },
+  { label: "Programs", href: "/app/programs", icon: CalendarRangeIcon },
 ];
 
 const profileMenuItems = [
@@ -74,8 +77,8 @@ export default function Navigation() {
       ? pathname === href
       : pathname === href || pathname.startsWith(`${href}/`);
 
-  const isWorkoutsPath = workoutsMenuItems.some(
-    (menuItem) => menuItem.href === pathname,
+  const isWorkoutsPath = workoutsMenuItems.some((menuItem) =>
+    isActivePath(menuItem.href),
   );
   const isProfilePath =
     isActivePath("/app/body-measurements") || isActivePath("/app/records");
@@ -175,7 +178,7 @@ export default function Navigation() {
           <DrawerHeader>
             <DrawerTitle>Workouts</DrawerTitle>
             <DrawerDescription className="sr-only">
-              Choose between workout history and workout templates
+              Choose between workout history, templates and programs
             </DrawerDescription>
           </DrawerHeader>
           <ul className="grid gap-1 px-4 pb-8">

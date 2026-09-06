@@ -3,6 +3,7 @@ import WeeklyReportStats from "./weekly-report-stats";
 import NewActiveWorkoutButton from "../../../features/workouts/components/new-active-workout-button";
 import WorkoutSummary from "./workout-summary";
 import ConsistencyStrip from "./consistency-strip";
+import TodayProgramCard from "@/features/programs/components/today-program-card";
 
 export default function HomePage() {
   return (
@@ -12,6 +13,7 @@ export default function HomePage() {
       </div>
       <div className="grid gap-4 sm:grid-cols-[1fr_15rem] sm:gap-8 lg:grid-cols-[1fr_16rem]">
         <div className="space-y-4 sm:col-start-2 sm:row-start-1">
+          <TodayProgramCard />
           <NewActiveWorkoutButton />
         </div>
         <div className="min-w-0 space-y-4 sm:col-start-1 sm:row-start-1">
