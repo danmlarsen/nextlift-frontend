@@ -36,7 +36,11 @@ export default function WorkoutSetOptionsButton({
           className="size-8 px-0 py-0 text-xs"
           disabled={!isEditing}
         >
-          <SetTypeBadge type={workoutSet.type} setNumber={workoutSet.setNumber} />
+          <SetTypeBadge
+            type={workoutSet.type}
+            setNumber={workoutSet.setNumber}
+            amrap={workoutSet.suggestedAmrap}
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

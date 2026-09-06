@@ -13,6 +13,8 @@ import {
 import { useWorkoutTemplates } from "@/api/workout-templates/queries";
 import { useWorkoutModal } from "./workout-modal/workout-modal-provider";
 import { useHaptics } from "@/hooks/use-haptics";
+import { useActiveEnrollment } from "@/api/program-enrollments/queries";
+import { useStartProgramDay } from "@/features/programs/hooks/use-start-program-day";
 
 interface StartWorkoutOptionsModalProps {
   isOpen: boolean;
@@ -28,9 +30,23 @@ export default function StartWorkoutOptionsModal({
   const templates = useWorkoutTemplates();
   const { openWorkout } = useWorkoutModal();
   const { vibrate } = useHaptics();
+  const { data: enrollment } = useActiveEnrollment();
+  const startProgramDay = useStartProgramDay();
+
+  const programDay = enrollment?.schedule.today ?? enrollment?.schedule.next;
+  const programDayStatus = enrollment?.schedule.today
+    ? enrollment.schedule.todayStatus
+    : null;
+  const canStartProgramDay =
+    enrollment?.status === "ACTIVE" &&
+    !!programDay &&
+    programDayStatus !== "COMPLETED" &&
+    programDayStatus !== "SKIPPED";
 
   const isPending =
-    createActiveWorkout.isPending || createWorkoutFromTemplate.isPending;
+    createActiveWorkout.isPending ||
+    createWorkoutFromTemplate.isPending ||
+    startProgramDay.isPending;
 
   const handleStarted = (workoutId: number) => {
     onOpenChange(false);
@@ -70,6 +86,29 @@ export default function StartWorkoutOptionsModal({
       content={
         <div className="space-y-4 p-4">
           <h2 className="text-xl font-bold">Start Workout</h2>
+
+          {canStartProgramDay && enrollment && programDay && (
+            <Button
+              className="h-auto w-full flex-col items-start gap-0.5 py-3"
+              variant="secondary"
+              disabled={isPending}
+              onClick={() => {
+                onOpenChange(false);
+                startProgramDay.start(enrollment.id, programDay.position);
+              }}
+            >
+              <span className="font-semibold">
+                {startProgramDay.isPending && (
+                  <Spinner className="mr-2 inline" />
+                )}
+                {enrollment.schedule.today ? "Today" : "Next"}:{" "}
+                {programDay.dayName}
+              </span>
+              <span className="text-xs opacity-80">
+                {enrollment.programName}
+              </span>
+            </Button>
+          )}
 
           <Button
             className="w-full"

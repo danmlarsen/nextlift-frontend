@@ -11,6 +11,7 @@ import { parseWorkoutTitle } from "@/lib/utils";
 import { useDeleteWorkout } from "@/api/workouts/workout-mutations";
 import { useWorkoutModal } from "./workout-modal/workout-modal-provider";
 import { useQueryClient } from "@tanstack/react-query";
+import RestTimerBadge from "./workout-modal/rest-timer/rest-timer-badge";
 
 export default function ActiveWorkoutOverlay() {
   const [deleteWorkoutOpen, setDeleteWorkoutOpen] = useState(false);
@@ -48,8 +49,11 @@ export default function ActiveWorkoutOverlay() {
           <div className="text-center text-sm font-bold">
             {parseWorkoutTitle(workout)}
           </div>
-          <div className="bg-secondary text-secondary-foreground rounded-lg p-1 px-2 text-sm">
-            <Timer workout={workout} />
+          <div className="flex items-center gap-2">
+            <div className="bg-secondary text-secondary-foreground rounded-lg p-1 px-2 text-sm">
+              <Timer workout={workout} />
+            </div>
+            <RestTimerBadge compact />
           </div>
         </div>
         <div className="flex items-center justify-end">

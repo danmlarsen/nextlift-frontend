@@ -4,12 +4,15 @@ import { cn } from "@/lib/utils";
 interface SetTypeBadgeProps {
   type: WorkoutSetType;
   setNumber: number;
+  /** Program AMRAP set: as many reps as possible, shown as "5+". */
+  amrap?: boolean;
   className?: string;
 }
 
 export default function SetTypeBadge({
   type,
   setNumber,
+  amrap = false,
   className,
 }: SetTypeBadgeProps) {
   return (
@@ -21,7 +24,7 @@ export default function SetTypeBadge({
         className,
       )}
     >
-      {type === "normal" && setNumber}
+      {type === "normal" && (amrap ? `${setNumber}+` : setNumber)}
       {type === "warmup" && "W"}
       {type === "dropset" && "D"}
       {type === "failure" && "F"}

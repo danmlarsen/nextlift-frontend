@@ -1,5 +1,6 @@
 import { type ExerciseData } from "../exercises/types";
 import { type NewRecordData } from "../personal-records/types";
+import { type ProgressionSummaryData } from "../program-enrollments/types";
 
 export type WorkoutsResponse = {
   success: boolean;
@@ -41,6 +42,18 @@ export type WorkoutData = {
   pauseDuration: number;
   lastPauseStartTime: string | null;
   activeDuration: number;
+  // Present only for workouts generated from a program day.
+  programDayLog?: WorkoutProgramDayLog | null;
+};
+
+export type WorkoutProgramDayLog = {
+  id: number;
+  enrollmentId: number;
+  cycle: number;
+  weekIndex: number;
+  dayIndex: number;
+  dayName: string;
+  status: "STARTED" | "COMPLETED" | "SKIPPED";
 };
 
 export type WorkoutExerciseData = {
@@ -54,6 +67,8 @@ export type WorkoutExerciseData = {
   exerciseOrder: number;
   previousWorkoutExercise?: WorkoutExerciseData;
   notes: string | null;
+  // Program slot the exercise was generated for (null for free workouts).
+  progressionKey?: string | null;
 };
 
 export type WorkoutSetData = {
@@ -73,12 +88,22 @@ export type WorkoutSetData = {
   suggestedReps: number | null;
   suggestedWeight: number | null;
   suggestedDuration: number | null;
+  // Rating of perceived exertion logged by the user (6-10 in half steps).
+  rpe: number | null;
+  // Program prescription (null / false on sets that are not program-generated).
+  programSetId: number | null;
+  suggestedRepsMax: number | null;
+  suggestedRpe: number | null;
+  suggestedRestSeconds: number | null;
+  suggestedAmrap: boolean;
 };
 
 // Set mutations may carry freshly detected personal records alongside the
-// workout; the records are stripped before the workout is cached.
+// workout, and completing a program workout carries its progression outcome;
+// both are one-shot signals stripped before the workout is cached.
 export type WorkoutMutationResponse = WorkoutData & {
   newRecords?: NewRecordData[];
+  progression?: ProgressionSummaryData | null;
 };
 
 export type WorkoutSetDto = {
@@ -87,6 +112,7 @@ export type WorkoutSetDto = {
   duration?: number | null;
   completed?: boolean;
   type?: WorkoutSetType;
+  rpe?: number | null;
 };
 
 export type CreateWorkoutDto = {

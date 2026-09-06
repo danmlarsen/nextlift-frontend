@@ -13,13 +13,25 @@ import WorkoutSetOptionsButton from "./workout-set-options-button";
 import { useWorkoutModal } from "../workout-modal-provider";
 import { useHaptics } from "@/hooks/use-haptics";
 import WorkoutSetInput from "./workout-set-input";
+import { useRestTimer } from "../rest-timer/rest-timer-context";
+import { formatSetTarget } from "@/lib/program-format";
 
 interface WorkoutSetProps {
   workoutSet: WorkoutSetData;
   exerciseCategory: "strength" | "cardio";
   previousSet?: WorkoutSetData;
   placeholderSet?: Partial<WorkoutSetData>;
+  /** Program workouts get an RPE column. */
+  showRpe?: boolean;
 }
+
+const RPE_VALUES = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
+
+const parseRpe = (value: string): number | null => {
+  if (value.trim() === "") return null;
+  const parsed = parseFloat(value);
+  return RPE_VALUES.includes(parsed) ? parsed : null;
+};
 
 const parseWorkoutValue = (
   value: string,
@@ -51,6 +63,7 @@ export default function WorkoutSet({
   exerciseCategory,
   previousSet,
   placeholderSet,
+  showRpe = false,
 }: WorkoutSetProps) {
   const [isChecked, setIsChecked] = useState(workoutSet.completed);
   const [weight, setWeight] = useState(workoutSet.weight?.toString() || "");
@@ -58,7 +71,9 @@ export default function WorkoutSet({
   const [duration, setDuration] = useState(
     workoutSet?.duration?.toString() || "",
   );
+  const [rpe, setRpe] = useState(workoutSet.rpe?.toString() || "");
   const { vibrate } = useHaptics();
+  const { startRest } = useRestTimer();
   const { workout, isEditing } = useWorkoutModal();
   const isPendingDelete = useMutationState({
     filters: {
@@ -145,6 +160,27 @@ export default function WorkoutSet({
     }
 
     updateWorkoutSet(payload);
+
+    // Only program sets carry a prescribed rest, so free workouts never
+    // start the countdown.
+    if (checkedChange && workoutSet.suggestedRestSeconds) {
+      startRest(workoutSet.suggestedRestSeconds);
+    }
+  };
+
+  const handleRpeChange = (value: string) => {
+    // Allow partial input like "8." while typing; the blur parses it.
+    if (value === "" || /^(10|[6-9](\.5?)?)$/.test(value)) {
+      setRpe(value);
+    }
+  };
+
+  const handleRpeBlur = () => {
+    const numericValue = parseRpe(rpe);
+    setRpe(numericValue?.toString() ?? "");
+    if (numericValue !== workoutSet.rpe) {
+      updateWorkoutSet({ rpe: numericValue });
+    }
   };
 
   const handleWeightChange = (value: string) => {
@@ -210,6 +246,19 @@ export default function WorkoutSet({
     previousSetString = `${previousSet.duration} Minutes`;
   }
 
+  // A program set shows its prescription where a free set shows history.
+  const targetString =
+    workoutSet.programSetId !== null
+      ? formatSetTarget({
+          repsMin: workoutSet.suggestedReps,
+          repsMax: workoutSet.suggestedRepsMax ?? workoutSet.suggestedReps,
+          isAmrap: workoutSet.suggestedAmrap,
+          weight: workoutSet.suggestedWeight,
+          targetRpe: workoutSet.suggestedRpe,
+          duration: workoutSet.suggestedDuration,
+        })
+      : null;
+
   return (
     <TableRow
       className={cn(
@@ -222,7 +271,13 @@ export default function WorkoutSet({
         <WorkoutSetOptionsButton workoutSet={workoutSet} />
       </TableCell>
       <TableCell className="text-muted-foreground">
-        {previousSetString}
+        {targetString !== null ? (
+          <span className="text-xs" title="Program target">
+            {targetString || "-"}
+          </span>
+        ) : (
+          previousSetString
+        )}
       </TableCell>
       <TableCell className="py-1">
         {exerciseCategory === "strength" && (
@@ -261,6 +316,23 @@ export default function WorkoutSet({
           />
         )}
       </TableCell>
+      {showRpe && (
+        <TableCell className="py-1">
+          {exerciseCategory === "strength" && (
+            <WorkoutSetInput
+              aria-label={`RPE for set ${workoutSet.setNumber}`}
+              placeholder={workoutSet.suggestedRpe?.toString() ?? ""}
+              value={rpe}
+              step={0.5}
+              min={6}
+              max={10}
+              onChange={(e) => handleRpeChange(e.target.value)}
+              onBlur={handleRpeBlur}
+              disabled={isPendingDelete || !isEditing}
+            />
+          )}
+        </TableCell>
+      )}
       <TableCell className="py-1">
         <Checkbox
           className="size-7 rounded-full"
